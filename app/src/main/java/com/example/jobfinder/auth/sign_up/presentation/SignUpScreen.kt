@@ -16,14 +16,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,20 +38,29 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jobfinder.R
+import com.example.jobfinder.auth.common.AuthInput
+import com.example.jobfinder.common.presentation.JobFinderAppButton
+import com.example.jobfinder.common.presentation.JobFinderTextInput
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
@@ -56,6 +71,8 @@ fun SignUpScreen() {
 @Composable
 fun SignUpScreenContent() {
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         topBar = {
             TopAppBar(title = { },
@@ -117,13 +134,115 @@ fun SignUpScreenContent() {
                 )
 
             }
+            Spacer(modifier = Modifier.height(10.dp))
+            AuthInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                icon = Icons.Default.Email,
+                label = "Email",
+                input = "",
+                supportingText = "",
+                onInput = {},
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                )
+            )
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AuthInput(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.Person,
+                    label = "First Name",
+                    input = "",
+                    supportingText = "",
+                    onInput = {},
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                    )
+                )
+                Spacer(modifier = Modifier.width(8.dp))
 
+                AuthInput(
+                    modifier = Modifier.weight(1f),
+                    icon = Icons.Default.Person,
+                    label = "Last Name",
+                    input = "",
+                    supportingText = "",
+                    onInput = {},
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                    )
+                )
+
+            }
+            AuthInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                icon = Icons.Default.Lock,
+                label = "Password",
+                input = "",
+                supportingText = "",
+                onInput = {},
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                )
+            )
+
+            JobFinderAppButton(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                onClick = { /*TODO*/ },
+                text = "Sign Up"
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Already have an account?",
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    modifier = Modifier.clickable {  },
+                    text = "Sign In",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
     }
 
 }
+
+
 
 @Composable
 fun AccountTypeCard(
