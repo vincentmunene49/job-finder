@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -114,14 +115,14 @@ fun HomeScreenContent() {
                 }
             }
 
-            Divider(modifier = Modifier.padding(vertical = 32.dp,horizontal = 16.dp))
+            Divider(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp))
 
 
             LazyColumn(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            ){
-                items(10){
+            ) {
+                items(10) {
                     JobCard(
                         modifier = Modifier.padding(horizontal = 16.dp),
                         orgIcon = null,
@@ -130,7 +131,8 @@ fun HomeScreenContent() {
                         companyName = "Google",
                         country = "Nigeria",
                         salary = "$100,000",
-                        days = "2"
+                        days = "2",
+                        openStatus = false
                     )
                 }
             }
@@ -226,16 +228,17 @@ fun JobCard(
     companyName: String,
     country: String,
     salary: String,
-    days:String,
-    onClick:()->Unit = {}
+    days: String,
+    openStatus:Boolean,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.7f),
-            shape = RoundedCornerShape(10.dp)
-        )
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.7f),
+                shape = RoundedCornerShape(10.dp)
+            )
             .clip(RoundedCornerShape(10.dp))
             .clickable(onClick = onClick)
     ) {
@@ -272,17 +275,31 @@ fun JobCard(
                     modifier = Modifier.padding(start = 16.dp),
                     text = salary,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
                 )
 
 
             }
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = "$days days",
-                color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-                style = MaterialTheme.typography.bodySmall.copy(fontSize = 15.sp)
-            )
+            Column {
+                Text(
+                    text = "$days days",
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    text = if(openStatus) "Open" else "Closed",
+                    color = if(openStatus) Color.Green else Color.Red,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                )
+            }
+
 
         }
 
