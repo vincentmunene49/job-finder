@@ -78,6 +78,7 @@ dependencies {
     //coil
     implementation("io.coil-kt:coil-compose:2.5.0")
 
+
     implementation("androidx.compose.material:material-icons-extended-android:1.6.4")
     //dialogs
     implementation("com.maxkeppeler.sheets-compose-dialogs:core:1.2.0")

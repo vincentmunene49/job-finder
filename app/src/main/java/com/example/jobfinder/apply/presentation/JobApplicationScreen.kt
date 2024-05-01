@@ -2,13 +2,16 @@ package com.example.jobfinder.apply.presentation
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -89,6 +93,7 @@ fun JobApplicationScreenContent() {
                     shape = CircleShape,
                     onClick = { /*TODO*/ }) {
                     Text(
+                        modifier = Modifier.padding(10.dp),
                         text = "Apply",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary
@@ -104,7 +109,7 @@ fun JobApplicationScreenContent() {
                 .verticalScroll(scrollState)
         ) {
             Text(
-                text = "Full Name",
+                text = "Full Name*",
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -126,7 +131,7 @@ fun JobApplicationScreenContent() {
 
 
             Text(
-                text = "Email",
+                text = "Email*",
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -148,7 +153,7 @@ fun JobApplicationScreenContent() {
 
 
             Text(
-                text = "Phone",
+                text = "Phone*",
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -166,6 +171,59 @@ fun JobApplicationScreenContent() {
                 ),
                 hint = "+254 712 345 678"
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Upload CV/Resume*",
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(150.dp)
+                    .background(
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable { }
+                    .clip(RoundedCornerShape(8.dp)),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.UploadFile,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Cover Letter(Optional)",
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(150.dp)
+                    .background(
+                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable { }
+                    .clip(RoundedCornerShape(8.dp)),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.UploadFile,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
