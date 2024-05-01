@@ -36,6 +36,8 @@ import androidx.compose.material.icons.filled.HomeRepairService
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -99,152 +102,168 @@ fun JobDescriptionScreenContent(
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.graphicsLayer {
+                    shape = RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp
+                    )
+                    clip = true
+                }
+            ) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    shape = CircleShape,
+                    onClick = { /*TODO*/ }) {
+                    Text(
+                        text = "Apply",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                AnimatedVisibility(visible = scrollOffset.value == 0) {
-                    Column {
+            AnimatedVisibility(visible = scrollOffset.value == 0) {
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        HeaderSection(
+                            jobTitle = "UI Designer",
+                            companyName = "Google",
+                            companyLogo = null,
+                            location = "Mountain View, CA",
+                            email = "info@google.com",
+                            phone = "+1 123 456 7890"
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-
-                        Row(
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        JobActionBox(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 16.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            HeaderSection(
-                                jobTitle = "UI Designer",
-                                companyName = "Google",
-                                companyLogo = null,
-                                location = "Mountain View, CA",
-                                email = "info@google.com",
-                                phone = "+1 123 456 7890"
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            icon = Icons.Default.Money,
+                            action = "Salary/mnth",
+                            description = "$42K - $50K"
+                        )
+                        JobActionBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            icon = Icons.Default.HomeRepairService,
+                            action = "Job Type",
+                            description = "Full-Time"
+                        )
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            JobActionBox(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp),
-                                icon = Icons.Default.Money,
-                                action = "Salary/mnth",
-                                description = "$42K - $50K"
-                            )
-                            JobActionBox(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp),
-                                icon = Icons.Default.HomeRepairService,
-                                action = "Job Type",
-                                description = "Full-Time"
-                            )
+                    }
 
-                        }
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        JobActionBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            icon = Icons.Default.Business,
+                            action = "Working Model",
+                            description = "Remote"
+                        )
+                        JobActionBox(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 8.dp),
+                            icon = Icons.Default.BarChart,
+                            action = "Level",
+                            description = "Intermediate"
+                        )
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            JobActionBox(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp),
-                                icon = Icons.Default.Business,
-                                action = "Working Model",
-                                description = "Remote"
-                            )
-                            JobActionBox(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 8.dp),
-                                icon = Icons.Default.BarChart,
-                                action = "Level",
-                                description = "Intermediate"
-                            )
-
-                        }
                     }
                 }
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider()
-                LazyColumn(
-                    modifier = Modifier.padding(16.dp),
-                    state = scrollState
-                ) {
-                    stickyHeader {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.background),
-                            text = "About this job",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Divider()
+            LazyColumn(
+                modifier = Modifier.padding(16.dp),
+                state = scrollState
+            ) {
+                stickyHeader {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colorScheme.background),
+                        text = "About this job",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
 
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
-                    item {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = aboutJob,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = aboutJob,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
 
-                    stickyHeader {
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(color = MaterialTheme.colorScheme.background),
+                stickyHeader {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = MaterialTheme.colorScheme.background),
 
-                            text = "Job Description",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
+                        text = "Job Description",
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
 
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                    }
-
-
-
-                    items(jobDescription) {
-
-                        JobDescriptionHolder(
-                            Modifier.padding(vertical = 5.dp),
-                            jobDescription = it,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
 
                 }
 
+
+
+                items(jobDescription) {
+
+                    JobDescriptionHolder(
+                        Modifier.padding(vertical = 5.dp),
+                        jobDescription = it,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
             }
-            JobFinderAppButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = { /*TODO*/ }, text = "Apply Now"
-            )
 
 
         }
+
+
     }
 
 
@@ -289,8 +308,8 @@ fun HeaderSection(
     companyLogo: String?,
     modifier: Modifier = Modifier,
     location: String,
-    email:String,
-    phone:String
+    email: String,
+    phone: String
 ) {
     Column(
         modifier = modifier,
