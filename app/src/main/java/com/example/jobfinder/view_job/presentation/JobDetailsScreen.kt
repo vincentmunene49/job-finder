@@ -30,10 +30,12 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.HPlusMobiledata
 import androidx.compose.material.icons.filled.HomeRepairService
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -117,7 +119,9 @@ fun JobDescriptionScreenContent(
                                 jobTitle = "UI Designer",
                                 companyName = "Google",
                                 companyLogo = null,
-                                location = "Mountain View, CA"
+                                location = "Mountain View, CA",
+                                email = "info@google.com",
+                                phone = "+1 123 456 7890"
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -284,7 +288,9 @@ fun HeaderSection(
     companyName: String,
     companyLogo: String?,
     modifier: Modifier = Modifier,
-    location: String
+    location: String,
+    email:String,
+    phone:String
 ) {
     Column(
         modifier = modifier,
@@ -309,6 +315,40 @@ fun HeaderSection(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = email,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Phone,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = phone,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            )
+        }
 
         Row(
             verticalAlignment = Alignment.CenterVertically
