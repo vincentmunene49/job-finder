@@ -2,33 +2,55 @@ package com.example.jobfinder.view_job.presentation
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.HPlusMobiledata
 import androidx.compose.material.icons.filled.HomeRepairService
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Money
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,90 +66,216 @@ fun JobDetailsScreen() {
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun JobDescriptionScreenContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    aboutJob: String,
+    jobDescription: List<String>
 ) {
-    Column(
+    val scrollState = rememberLazyListState()
+    val scrollOffset = remember {
+        derivedStateOf {
+            scrollState.firstVisibleItemScrollOffset
+
+        }
+    }
+
+    Scaffold(
         modifier = modifier
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                HeaderSection(
-                    jobTitle = "UI Designer",
-                    companyName = "Google",
-                    companyLogo = null,
-                    location = "Mountain View, CA"
-                )
+        topBar = {
+            TopAppBar(
+                title = { /*TODO*/ },
+                navigationIcon = {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.padding(paddingValues)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                AnimatedVisibility(visible = scrollOffset.value == 0) {
+                    Column {
+
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            HeaderSection(
+                                jobTitle = "UI Designer",
+                                companyName = "Google",
+                                companyLogo = null,
+                                location = "Mountain View, CA"
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            JobActionBox(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                icon = Icons.Default.Money,
+                                action = "Salary/mnth",
+                                description = "$42K - $50K"
+                            )
+                            JobActionBox(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                icon = Icons.Default.HomeRepairService,
+                                action = "Job Type",
+                                description = "Full-Time"
+                            )
+
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            JobActionBox(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                icon = Icons.Default.Business,
+                                action = "Working Model",
+                                description = "Remote"
+                            )
+                            JobActionBox(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
+                                icon = Icons.Default.BarChart,
+                                action = "Level",
+                                description = "Intermediate"
+                            )
+
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Divider()
+                LazyColumn(
+                    modifier = Modifier.padding(16.dp),
+                    state = scrollState
+                ) {
+                    stickyHeader {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background),
+                            text = "About this job",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = aboutJob,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    stickyHeader {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = MaterialTheme.colorScheme.background),
+
+                            text = "Job Description",
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                fontWeight = FontWeight.Bold
+                            ),
+
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                    }
+
+
+
+                    items(jobDescription) {
+
+                        JobDescriptionHolder(
+                            Modifier.padding(vertical = 5.dp),
+                            jobDescription = it,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+
+                }
+
+
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            JobFinderAppButton(
+                modifier = Modifier.padding(16.dp),
+                onClick = { /*TODO*/ }, text = "Apply Now"
+            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                JobActionBox(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                    icon = Icons.Default.Money,
-                    action = "Salary/mnth",
-                    description = "$42K - $50K"
-                )
-                JobActionBox(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                    icon = Icons.Default.HomeRepairService,
-                    action = "Job Type",
-                    description = "Remote"
-                )
-
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                JobActionBox(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                    icon = Icons.Default.Business,
-                    action = "Working Model",
-                    description = "$42K - $50K"
-                )
-                JobActionBox(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                    icon = Icons.Default.BarChart,
-                    action = "Level",
-                    description = "Remote"
-                )
-
-            }
 
         }
-        JobFinderAppButton(
-            modifier = Modifier.padding(16.dp),
-            onClick = { /*TODO*/ }, text = "Apply Now"
-        )
-
-
     }
 
 
+}
+
+@Composable
+fun JobDescriptionHolder(
+    modifier: Modifier = Modifier,
+    jobDescription: String,
+    color: Color
+) {
+    Card(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            Divider(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(2.dp),
+                color = color
+            )
+            Text(
+                text = jobDescription,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+        }
+    }
 }
 
 @Composable
@@ -248,6 +396,23 @@ fun JobActionBox(
 @Composable
 fun PreviewJobDescription() {
     JobFinderTheme {
-        JobDescriptionScreenContent()
+        JobDescriptionScreenContent(
+            aboutJob = "Lorem ipsum dolor sit amet, " +
+                    "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            jobDescription = listOf(
+                "Design and implement user interfaces for our web platform",
+                "Collaborate with product management and engineering to define and implement innovative solutions for the product direction, visuals and experience",
+                "Conduct user research and evaluate user feedback",
+                "Establish and promote design guidelines, best practices and standards",
+                "Execute all visual design stages from concept to final hand-off to engineering",
+                "Present and defend designs and key milestone deliverables to peers and executive level stakeholders",
+                "Design and implement user interfaces for our web platform",
+                "Collaborate with product management and engineering to define and implement innovative solutions for the product direction, visuals and experience",
+                "Conduct user research and evaluate user feedback",
+                "Establish and promote design guidelines, best practices and standards",
+                "Execute all visual design stages from concept to final hand-off to engineering",
+                "Present and defend designs and key milestone deliverables to peers and executive level stakeholders"
+            )
+        )
     }
 }
