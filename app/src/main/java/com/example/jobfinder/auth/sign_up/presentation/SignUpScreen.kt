@@ -57,19 +57,30 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.auth.common.AuthInput
 import com.example.jobfinder.common.presentation.JobFinderAppButton
 import com.example.jobfinder.common.presentation.JobFinderTextInput
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    navHostController: NavController
+) {
+    SignUpScreenContent(
+        navHostController
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreenContent() {
+fun SignUpScreenContent(
+    navHostController: NavController
+) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
@@ -213,7 +224,9 @@ fun SignUpScreenContent() {
 
             JobFinderAppButton(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                onClick = { /*TODO*/ },
+                onClick = {
+                    navHostController.navigate(Routes.Login.route)
+                },
                 text = "Sign Up"
             )
 
@@ -228,7 +241,9 @@ fun SignUpScreenContent() {
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    modifier = Modifier.clickable {  },
+                    modifier = Modifier.clickable {
+                        navHostController.navigate(Routes.Login.route)
+                    },
                     text = "Sign In",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontWeight = FontWeight.Bold
@@ -241,7 +256,6 @@ fun SignUpScreenContent() {
     }
 
 }
-
 
 
 @Composable
@@ -309,7 +323,7 @@ fun AccountTypeCard(
 @Composable
 fun PreviewSignUpScreen() {
     JobFinderTheme {
-        SignUpScreenContent()
+        SignUpScreenContent(rememberNavController())
     }
 
 }

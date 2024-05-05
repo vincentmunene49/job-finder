@@ -34,18 +34,26 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.auth.common.AuthInput
 import com.example.jobfinder.common.presentation.JobFinderAppButton
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
-fun LoginScreen() {
-    
+fun LoginScreen(
+    navHostController: NavController
+) {
+    LoginScreenContent(navHostController = navHostController)
 }
 
 @Composable
-fun LoginScreenContent() {
+fun LoginScreenContent(
+    navHostController: NavController
+) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
@@ -55,7 +63,7 @@ fun LoginScreenContent() {
             .background(color = MaterialTheme.colorScheme.background)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(10.dp)
-    ){
+    ) {
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
@@ -73,13 +81,14 @@ fun LoginScreenContent() {
 
         Box(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center){
+            contentAlignment = Alignment.Center
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.loginimage),
                 contentDescription = null
-            ) 
+            )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
 
         AuthInput(
@@ -120,7 +129,11 @@ fun LoginScreenContent() {
 
         JobFinderAppButton(
             modifier = Modifier.padding(horizontal = 16.dp),
-            onClick = { /*TODO*/ },
+            onClick = {
+                navHostController.navigate(
+                    route = Routes.Main.route
+                )
+            },
             text = "Login"
         )
 
@@ -135,7 +148,9 @@ fun LoginScreenContent() {
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                modifier = Modifier.clickable {  },
+                modifier = Modifier.clickable {
+                    navHostController.navigate(Routes.Register.route)
+                },
                 text = "Sign Up",
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Bold
@@ -152,7 +167,7 @@ fun LoginScreenContent() {
 @Composable
 fun PreviewSignUpScreen() {
     JobFinderTheme {
-        LoginScreenContent()
+        LoginScreenContent(rememberNavController())
     }
 
 }

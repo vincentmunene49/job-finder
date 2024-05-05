@@ -44,12 +44,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.common.presentation.AppBasicTextField
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+
+@Composable
+fun JobApplicationScreen(
+    navController: NavController
+) {
+    JobApplicationScreenContent(navController = navController)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobApplicationScreenContent() {
+fun JobApplicationScreenContent(navController: NavController) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     Scaffold(
@@ -67,7 +78,7 @@ fun JobApplicationScreenContent() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null
@@ -91,7 +102,7 @@ fun JobApplicationScreenContent() {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
-                    onClick = { /*TODO*/ }) {
+                    onClick = { navController.navigate(Routes.Success.route)}) {
                     Text(
                         modifier = Modifier.padding(10.dp),
                         text = "Apply",
@@ -233,6 +244,6 @@ fun JobApplicationScreenContent() {
 @Composable
 fun PreviewJobApplicationScreen() {
     JobFinderTheme {
-        JobApplicationScreenContent()
+        JobApplicationScreenContent(rememberNavController())
     }
 }

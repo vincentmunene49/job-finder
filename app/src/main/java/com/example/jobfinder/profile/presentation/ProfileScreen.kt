@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +34,11 @@ import coil.compose.AsyncImage
 import com.example.jobfinder.R
 import com.example.jobfinder.applications.presentation.ApplicationListScreenContent
 import com.example.jobfinder.ui.theme.JobFinderTheme
+
+@Composable
+fun ProfileScreen() {
+    ProfileScreenContent()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,11 +87,15 @@ fun ProfileScreenContent() {
                                 color = MaterialTheme.colorScheme.onPrimary,
                                 shape = CircleShape
                             )
+                            .size(50.dp)
                             .clickable { }
-                            .clip(CircleShape)
+                            .clip(CircleShape),
+                        contentAlignment = Alignment.Center
+
                     ) {
                         AsyncImage(
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier
+                                .padding(8.dp),
                             model = null,
                             contentDescription = null,
                             placeholder = painterResource(id = R.drawable.person)

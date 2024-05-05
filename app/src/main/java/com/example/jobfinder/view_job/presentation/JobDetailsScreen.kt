@@ -60,14 +60,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.common.presentation.JobFinderAppButton
 import com.example.jobfinder.home.common.OrgIcon
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
-fun JobDetailsScreen() {
-
+fun JobDetailsScreen(
+    navHostController: NavController,
+    fromHomeScreen: Boolean
+) {
+JobDescriptionScreenContent(
+    aboutJob ="",
+    jobDescription = listOf(),
+    navHostController =navHostController,
+    fromHomeScreen = fromHomeScreen
+)
 }
 
 
@@ -76,7 +88,9 @@ fun JobDetailsScreen() {
 fun JobDescriptionScreenContent(
     modifier: Modifier = Modifier,
     aboutJob: String,
-    jobDescription: List<String>
+    jobDescription: List<String>,
+    navHostController: NavController,
+    fromHomeScreen:Boolean = true
 ) {
     val scrollState = rememberLazyListState()
     val scrollOffset = remember {
@@ -94,7 +108,7 @@ fun JobDescriptionScreenContent(
             TopAppBar(
                 title = { /*TODO*/ },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navHostController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = null
@@ -118,9 +132,11 @@ fun JobDescriptionScreenContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
-                    onClick = { /*TODO*/ }) {
+                    onClick = {
+                        if(fromHomeScreen) navHostController.navigate(route = Routes.Apply.route) else navHostController.navigateUp()
+                    }) {
                     Text(
-                        text = "Apply",
+                        text = if(fromHomeScreen)"Apply" else "Back",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -471,7 +487,8 @@ fun PreviewJobDescription() {
                 "Establish and promote design guidelines, best practices and standards",
                 "Execute all visual design stages from concept to final hand-off to engineering",
                 "Present and defend designs and key milestone deliverables to peers and executive level stakeholders"
-            )
+            ),
+            navHostController = rememberNavController()
         )
     }
 }

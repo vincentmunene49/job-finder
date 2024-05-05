@@ -39,25 +39,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.home.common.OrgIcon
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
-fun HomeScreen() {
-
+fun HomeScreen(
+    navController: NavController
+) {
+    HomeScreenContent(navController = navController as NavHostController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreenContent() {
-
+fun HomeScreenContent(
+    navController: NavHostController
+) {
 
     Scaffold(
         topBar = {
@@ -132,7 +140,10 @@ fun HomeScreenContent() {
                         country = "Nigeria",
                         salary = "$100,000",
                         days = "2",
-                        openStatus = false
+                        openStatus = false,
+                        onClick = {
+                            navController.navigate(Routes.JobDetails.route)
+                        }
                     )
                 }
             }
@@ -152,9 +163,9 @@ fun SearchBoxComponent(
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = modifier,
-        value = value,
+        value = "value valu e valiew",
         onValueChange = onValueChange,
-        textStyle = MaterialTheme.typography.bodySmall,
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
         enabled = true,
         readOnly = false,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
@@ -182,7 +193,6 @@ fun SearchBoxComponent(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     IconButton(
                         onClick = {
@@ -197,6 +207,7 @@ fun SearchBoxComponent(
                         )
                     }
                     innerTextField()
+                    Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
 
@@ -311,7 +322,7 @@ fun JobCard(
 @Composable
 fun PreviewHomeScreen() {
     JobFinderTheme {
-        HomeScreenContent()
+        HomeScreenContent(navController = rememberNavController())
     }
 
 }

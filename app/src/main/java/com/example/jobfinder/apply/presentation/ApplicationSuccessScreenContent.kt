@@ -24,10 +24,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
-fun ApplicationSuccessScreenContent() {
+fun SuccessApplicationScreen(
+    navController: NavController
+) {
+    ApplicationSuccessScreenContent(navController = navController)
+}
+
+@Composable
+fun ApplicationSuccessScreenContent(
+    navController: NavController
+) {
     Scaffold(modifier = Modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background),
@@ -46,7 +59,11 @@ fun ApplicationSuccessScreenContent() {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
-                    onClick = { /*TODO*/ }) {
+                    onClick = { navController.navigate(Routes.Home.route){
+                        popUpTo(Routes.Home.route){
+                            inclusive = true
+                        }
+                    } }) {
                     Text(
                         modifier = Modifier.padding(10.dp),
                         text = "Back to Home",
@@ -109,6 +126,6 @@ fun ApplicationSuccessScreenContent() {
 @Composable
 fun PreviewSuccessApplication() {
     JobFinderTheme {
-        ApplicationSuccessScreenContent()
+        ApplicationSuccessScreenContent(rememberNavController())
     }
 }

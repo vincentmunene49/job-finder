@@ -19,14 +19,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.common.data.model.JobItem
 import com.example.jobfinder.home.presentation.JobCard
+import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+
+@Composable
+fun ApplicationListScreen(
+    navHostController: NavController
+) {
+    ApplicationListScreenContent(navHostController = navHostController, applications = emptyList())
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplicationListScreenContent(
-    applications: List<JobItem>
+    applications: List<JobItem>,
+    navHostController: NavController
 ) {
 
     Scaffold(
@@ -62,7 +74,10 @@ fun ApplicationListScreenContent(
                     country = "Nigeria",
                     salary = "$100,000",
                     days = "2",
-                    openStatus = false
+                    openStatus = false,
+                    onClick = {
+                        navHostController.navigate(Routes.JobDetails.route)
+                    }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
             }
@@ -79,7 +94,8 @@ fun ApplicationListScreenContent(
 fun PreviewHomeScreen() {
     JobFinderTheme {
         ApplicationListScreenContent(
-            emptyList()
+            emptyList(),
+            rememberNavController()
         )
     }
 
