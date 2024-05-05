@@ -41,6 +41,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -64,22 +66,33 @@ import com.example.jobfinder.R
 import com.example.jobfinder.auth.common.AuthInput
 import com.example.jobfinder.common.presentation.JobFinderAppButton
 import com.example.jobfinder.common.presentation.JobFinderTextInput
+import com.example.jobfinder.common.presentation.LoadingAnimation
+import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun SignUpScreen(
-    navHostController: NavController
+    navHostController: NavController,
+    viewModel: SignUpViewModel = hiltViewModel()
 ) {
     SignUpScreenContent(
-        navHostController
+        navHostController,
+        state = viewModel.state,
+        onEvent = viewModel::event,
+        uiEvent = viewModel.uiEvent
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreenContent(
-    navHostController: NavController
+    navHostController: NavController,
+    state: SignUpState,
+    onEvent: (SignUpEvents) -> Unit,
+    uiEvent: Flow<UiEvent>,
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
@@ -98,163 +111,210 @@ fun SignUpScreenContent(
             )
         }
     ) { paddingValues ->
-        Column(
+
+        LaunchedEffect(key1 = true) {
+            uiEvent.collect { event ->
+                when (event) {
+                    is UiEvent.OnSuccess -> {
+                        navHostController.navigate(route = Routes.Login.route) {
+                            popUpTo(Routes.Register.route) {
+                                inclusive = true
+                            }
+                        }
+                    }
+
+                    else -> {}
+
+                }
+
+            }
+        }
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
-                .verticalScroll(scrollState)
-                .padding(paddingValues),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(paddingValues = paddingValues)
         ) {
 
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = "Sign Up",
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = "Join us to find your dream job",
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 8.dp),
-                text = "choose your account type",
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                textAlign = TextAlign.Center
-            )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            Column(
+                modifier = Modifier
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                AccountTypeCard(
-                    icon = R.drawable.boss,
-                    accountTypeText = "Employer",
-                    isSelected = true
-                )
-                AccountTypeCard(
-                    icon = R.drawable.jobseeker,
-                    accountTypeText = "Job Finder",
-                    isSelected = false
-                )
 
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-            AuthInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                icon = Icons.Default.Email,
-                label = "Email",
-                input = "",
-                supportingText = "",
-                onInput = {},
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-                )
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AuthInput(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Default.Person,
-                    label = "First Name",
-                    input = "",
-                    supportingText = "",
-                    onInput = {},
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-                    )
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-
-                AuthInput(
-                    modifier = Modifier.weight(1f),
-                    icon = Icons.Default.Person,
-                    label = "Last Name",
-                    input = "",
-                    supportingText = "",
-                    onInput = {},
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Email,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
-                    )
-                )
-
-            }
-            AuthInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                icon = Icons.Default.Lock,
-                label = "Password",
-                input = "",
-                supportingText = "",
-                onInput = {},
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { focusManager.clearFocus() }
-                )
-            )
-
-            JobFinderAppButton(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                onClick = {
-                    navHostController.navigate(Routes.Login.route)
-                },
-                text = "Sign Up"
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 Text(
-                    text = "Already have an account?",
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Sign Up",
                     color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleLarge
                 )
-                Spacer(modifier = Modifier.width(5.dp))
                 Text(
-                    modifier = Modifier.clickable {
-                        navHostController.navigate(Routes.Login.route)
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Join us to find your dream job",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 8.dp),
+                    text = "choose your account type",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    textAlign = TextAlign.Center
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    AccountTypeCard(
+                        icon = R.drawable.boss,
+                        accountTypeText = "Employer",
+                        isSelected = state.isAdmin,
+                        onClick = {
+                            onEvent(SignUpEvents.OnClickAdmin)
+                        }
+                    )
+                    AccountTypeCard(
+                        icon = R.drawable.jobseeker,
+                        accountTypeText = "Job Finder",
+                        isSelected = !state.isAdmin,
+                        onClick = {
+                            onEvent(SignUpEvents.OnClickUser)
+                        }
+                    )
+
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                AuthInput(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    icon = Icons.Default.Email,
+                    label = "Email",
+                    input = state.email,
+                    supportingText = state.emailErrorMessage ?: "",
+                    onInput = {
+                        onEvent(SignUpEvents.OnTypeEmail(it))
                     },
-                    text = "Sign In",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Bold
+                    errorMessage = state.emailErrorMessage,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
                     ),
-                    color = MaterialTheme.colorScheme.primary
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                    )
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AuthInput(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Default.Person,
+                        label = "First Name",
+                        input = state.firstName,
+                        errorMessage = state.firstNameErrorMessage,
+                        supportingText = state.firstNameErrorMessage ?: "",
+                        onInput = {
+                            onEvent(SignUpEvents.OnTypeFirstName(it))
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    AuthInput(
+                        modifier = Modifier.weight(1f),
+                        icon = Icons.Default.Person,
+                        label = "Last Name",
+                        input = state.lastName,
+                        errorMessage = state.lastNameErrorMessage,
+                        supportingText = state.lastNameErrorMessage ?: "",
+                        onInput = {
+                            onEvent(SignUpEvents.OnTypeLastName(it))
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(focusDirection = FocusDirection.Down) }
+                        )
+                    )
+
+                }
+                AuthInput(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    icon = Icons.Default.Lock,
+                    label = "Password",
+                    input = state.password,
+                    supportingText = state.passwordErrorMessage ?: "",
+                    errorMessage = state.passwordErrorMessage,
+                    onInput = {
+                        onEvent(SignUpEvents.OnTypePassword(it))
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { focusManager.clearFocus() }
+                    )
+                )
+
+                JobFinderAppButton(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    onClick = {
+                        onEvent(SignUpEvents.OnClickRegister)
+                    },
+                    text = "Sign Up"
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Already have an account?",
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    Text(
+                        modifier = Modifier.clickable {
+                            navHostController.navigate(Routes.Login.route)
+                        },
+                        text = "Sign In",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            if (state.isLoading) {
+                LoadingAnimation(
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
+
         }
 
     }
-
 }
 
 
@@ -318,12 +378,18 @@ fun AccountTypeCard(
 
 }
 
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewSignUpScreen() {
     JobFinderTheme {
-        SignUpScreenContent(rememberNavController())
+        SignUpScreenContent(
+            rememberNavController(),
+            state = SignUpState(),
+            onEvent = {},
+            uiEvent = flowOf()
+        )
     }
 
 }
