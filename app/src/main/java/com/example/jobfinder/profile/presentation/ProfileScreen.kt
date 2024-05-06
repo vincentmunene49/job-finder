@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
-import com.example.jobfinder.applications.presentation.ApplicationListScreenContent
+import com.example.jobfinder.user.applications.presentation.ApplicationListScreenContent
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable

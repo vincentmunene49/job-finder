@@ -1,15 +1,14 @@
 package com.example.jobfinder.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.example.jobfinder.admin.main.presentation.MainAdminAppScreens
 import com.example.jobfinder.auth.login.presentation.LoginScreen
 import com.example.jobfinder.auth.sign_up.presentation.SignUpScreen
-import com.example.jobfinder.main.presentation.MainAppScreens
+import com.example.jobfinder.user.main.presentation.MainUserAppScreens
 
 @Composable
 fun ApplicationGraph() {
@@ -30,8 +29,12 @@ fun ApplicationGraph() {
             }
         }
 
-        composable(route = Routes.Main.route){
-            MainAppScreens()
+        composable(route = Routes.MainUserScreens.route){
+            MainUserAppScreens()
+        }
+        //add the MainAppScreensForAdmin
+        composable(route = Routes.MainAdminScreens.route){
+            MainAdminAppScreens()
         }
 
     }

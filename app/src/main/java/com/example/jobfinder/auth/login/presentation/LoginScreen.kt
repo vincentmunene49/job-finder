@@ -37,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.auth.common.AuthInput
@@ -77,12 +76,20 @@ fun LoginScreenContent(
         uiEvent.collect { event ->
             when (event) {
                 is UiEvent.NavigateToAdminScreens -> {
+                    navHostController.navigate(
+                        route = Routes.MainAdminScreens.route
+                    ) {
+                        popUpTo(Routes.Login.route) {
+                            inclusive = true
+                        }
+
+                    }
                     Timber.tag("LoginScreen").d("Navigate to Admin Screens")
                 }
 
                 is UiEvent.NavigateToUserScreens -> {
                     navHostController.navigate(
-                        route = Routes.Main.route
+                        route = Routes.MainUserScreens.route
                     ) {
                         popUpTo(Routes.Login.route) {
                             inclusive = true
@@ -207,13 +214,14 @@ fun LoginScreenContent(
 
         }
 
-        if(state.isLoading){
+        if (state.isLoading) {
             LoadingAnimation(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
     }
 }
+
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable

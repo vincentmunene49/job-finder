@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -26,15 +28,17 @@ fun AppBasicTextField(
     keyboardActions: KeyboardActions,
     keyboardOptions: KeyboardOptions,
     hint: String,
-    singleLine:Boolean = true
+    enabled: Boolean = true,
+    boxPadding: Dp = 0.dp,
+    singleLine: Boolean = true
 
 ) {
     BasicTextField(
         modifier = modifier,
         value = value,
         onValueChange = onValueChange,
-        textStyle = MaterialTheme.typography.bodySmall,
-        enabled = true,
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
+        enabled = enabled,
         readOnly = false,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         singleLine = singleLine,
@@ -42,26 +46,31 @@ fun AppBasicTextField(
         keyboardActions = keyboardActions,
         decorationBox = { innerTextField ->
             Box(
-                modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp)
-                ),
-                contentAlignment = Alignment.CenterStart
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(8.dp)
+                    ),
             ) {
-               Box (
-                   modifier = Modifier.fillMaxWidth().padding(16.dp),
-               ){
-                   innerTextField()
-                   if (value.isBlank() || value.isEmpty()) {
-                       Text(
-                           text = hint,
-                           style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium, fontSize = 12.sp),
-                           color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                       )
-                   }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(if (boxPadding == 0.dp) 16.dp else boxPadding),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    innerTextField()
+                    if (value.isBlank() || value.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 12.sp
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                        )
+                    }
 
-               }
-
+                }
 
 
             }
