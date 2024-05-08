@@ -6,4 +6,6 @@ interface FormValidatorRepository {
     fun validateFirstName(username: String): ValidationResult
     fun validateLastName(username: String): ValidationResult
 
+    fun validateGeneralStringField(field: String): ValidationResult
+
 }

@@ -81,5 +81,18 @@ class DefaultFormValidatorRepositoryImpl : FormValidatorRepository{
         )
     }
 
+    override fun validateGeneralStringField(field: String): ValidationResult {
+        if(field.isBlank()){
+            return ValidationResult(
+                successful = false,
+                errorMessage = "This field can not be blank"
+            )
+        }
+        return ValidationResult(
+            successful = true,
+            errorMessage = null
+        )
+    }
+
 
 }

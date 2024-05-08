@@ -1,5 +1,7 @@
 package com.example.jobfinder.di
 
+import com.example.jobfinder.admin.post.data.DefaultPostJobRepositoryImpl
+import com.example.jobfinder.admin.post.domain.PostJobRepository
 import com.example.jobfinder.auth.login.data.DefaultLoginRepositoryImpl
 import com.example.jobfinder.auth.login.domain.LoginRepository
 import com.example.jobfinder.auth.sign_up.data.DefaultRegisterRepositoryImpl
@@ -52,6 +54,16 @@ object Module {
         firebaseAuth: FirebaseAuth,
         firebaseFirestore: FirebaseFirestore
     ): LoginRepository = DefaultLoginRepositoryImpl(firebaseAuth, firebaseFirestore)
+
+    @Provides
+    @Singleton
+    fun provideJobRepository(
+        firebaseFirestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage
+    ): PostJobRepository = DefaultPostJobRepositoryImpl(firebaseFirestore, firebaseStorage)
+
+
+
 
 
 
