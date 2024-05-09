@@ -51,9 +51,10 @@ sealed class JobPostingEvent {
     data class OnSelectSalary(val salary:String) : JobPostingEvent()
 
     data class OnSelectFrequency(val frequency: String) : JobPostingEvent()
-    data class OnPhotoSelected(val uri: Uri?, val byteArray: ByteArray?) : JobPostingEvent() {
+    data class OnPhotoSelected(val uri: Uri?, val byteArray: ByteArray?) : JobPostingEvent()
 
-    }
+
+    data class OnAddRequirement(val index: Int, val requirement: String) : JobPostingEvent()
 
 
 }
