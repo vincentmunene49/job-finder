@@ -67,7 +67,7 @@ class PostJobViewModel @Inject constructor(
                     validateGeneralField(
                         state.requirements?.joinToString(separator = ", ") ?: "",
                         "requirements"
-                    )
+                    ) && validateGeneralField(state.companyName ?: "", "companyName")
                 ) {
                     postJob()
                 }
@@ -184,6 +184,11 @@ class PostJobViewModel @Inject constructor(
                 state = state.copy(requirements = newRequirements)
 
             }
+
+            is JobPostingEvent.OnTypeCompanyName -> {
+                state = state.copy(companyName = event.companyName)
+                validateGeneralField(event.companyName , "companyName")
+            }
         }
     }
 
@@ -194,6 +199,7 @@ class PostJobViewModel @Inject constructor(
             jobDescription = state.jobDescription?.lowercase() ?: "",
             workingModel = state.workingModel ?: "",
             jobType = state.jobType ?: "",
+            companyName = state.companyName ?: "",
             currency = state.currency ?: "",
             frequency = state.frequency ?: "",
             salary = state.salary ?: "",
@@ -258,6 +264,7 @@ class PostJobViewModel @Inject constructor(
         val result = formValidatorRepository.validateGeneralStringField(field)
         state = when (fieldName) {
             "jobTitle" -> state.copy(jobTitleError = result.errorMessage)
+            "companyName" -> state.copy(companyNameError = result.errorMessage)
             "jobDescription" -> state.copy(jobDescriptionError = result.errorMessage)
             "jobCity" -> state.copy(jobCityError = result.errorMessage)
             "jobCountry" -> state.copy(jobCountryError = result.errorMessage)

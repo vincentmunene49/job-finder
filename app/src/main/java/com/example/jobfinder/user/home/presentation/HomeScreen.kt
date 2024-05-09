@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -46,25 +46,33 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
-import com.example.jobfinder.user.home.common.OrgIcon
+import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+import com.example.jobfinder.user.home.common.OrgIcon
 
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-    HomeScreenContent(navController = navController as NavHostController)
+    HomeScreenContent(
+        navController = navController,
+        state = viewModel.state,
+        onEvent = viewModel::onEvent
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreenContent(
-    navController: NavHostController
+    navController: NavController,
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit
 ) {
 
     Scaffold(
@@ -72,83 +80,103 @@ fun HomeScreenContent(
             MediumTopAppBar(title = { /*TODO*/ })
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
-                .padding(paddingValues)
+                .padding(paddingValues = paddingValues)
         ) {
-            Text(
-                modifier = Modifier.padding(start = 16.dp),
-                text = "Search For Jobs",
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
             ) {
-                SearchBoxComponent(
+                Text(
+                    modifier = Modifier.padding(start = 16.dp),
+                    text = "Search For Jobs",
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
-                        .padding(horizontal = 16.dp),
-                    value = "",
-                    onValueChange = {}
-                )
-
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.primary,
-                            shape = RoundedCornerShape(6.dp)
-                        )
-                        .clickable { },
-                    contentAlignment = Alignment.Center
+                        .padding(end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        modifier = Modifier.padding(5.dp),
-                        imageVector = Icons.Default.Tune,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-
-                }
-            }
-
-            Divider(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp))
-
-
-            LazyColumn(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(10) {
-                    JobCard(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        orgIcon = null,
-                        city = "Lagos",
-                        jobTitle = "Software Engineer",
-                        companyName = "Google",
-                        country = "Nigeria",
-                        salary = "$100,000",
-                        days = "2",
-                        openStatus = false,
-                        onClick = {
-                            navController.navigate(Routes.JobDetails.route)
+                    SearchBoxComponent(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 16.dp),
+                        value = state.search ?: "",
+                        onValueChange = {
+                            onEvent(HomeEvent.OnTypeSearchValue(it))
+                        },
+                        onClickClear = {
+                            onEvent(HomeEvent.OnClickClear)
                         }
                     )
+
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.primary,
+                                shape = RoundedCornerShape(6.dp)
+                            )
+                            .clickable {
+                                onEvent(HomeEvent.OnClickClear)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            modifier = Modifier.padding(5.dp),
+                            imageVector = Icons.Default.Tune,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+
+                    }
                 }
+
+                Divider(modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp))
+
+
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(state.jobs ?: emptyList()) { job ->
+                        JobCard(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            orgIcon = job.companyLogo,
+                            city = job.jobLocation,
+                            jobTitle = job.jobTitle,
+                            companyName = job.companyName ?: "",
+                            country = "",
+                            currency = job.currency,
+                            frequency = job.frequency,
+                            salary = job.salary,
+                            days = "2",
+                            openStatus = true,
+                            onClick = {
+                                navController.navigate(Routes.JobDetails.route + "/${job.jobId}")
+                            }
+                        )
+                    }
+                }
+
+
             }
 
-
+            if(state.isLoading == true){
+                LoadingAnimation(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
 
     }
@@ -158,12 +186,13 @@ fun HomeScreenContent(
 fun SearchBoxComponent(
     modifier: Modifier = Modifier,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    onClickClear: () -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = modifier,
-        value = "value valu e valiew",
+        value = value,
         onValueChange = onValueChange,
         textStyle = TextStyle(color = MaterialTheme.colorScheme.onBackground),
         enabled = true,
@@ -210,7 +239,7 @@ fun SearchBoxComponent(
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(
                         onClick = {
-
+                            onClickClear()
                         }
                     ) {
                         Icon(
@@ -238,9 +267,11 @@ fun JobCard(
     jobTitle: String,
     companyName: String,
     country: String,
+    currency: String = "",
+    frequency: String = "",
     salary: String,
     days: String,
-    openStatus:Boolean,
+    openStatus: Boolean,
     onClick: () -> Unit = {}
 ) {
     Box(
@@ -278,16 +309,32 @@ fun JobCard(
                 )
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
-                    text = "$companyName . $city, $country",
+                    text = "$companyName . $city",
                     color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
                     style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp)
                 )
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = salary,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
-                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    modifier = Modifier.padding(start = 16.dp)
+                ) {
+                    Text(
+                        text = currency,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = salary,
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                    Text(
+                        text = " / $frequency",
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold)
+                    )
+                }
 
 
             }
@@ -302,8 +349,8 @@ fun JobCard(
                 )
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
-                    text = if(openStatus) "Open" else "Closed",
-                    color = if(openStatus) Color.Green else Color.Red,
+                    text = if (openStatus) "Open" else "Closed",
+                    color = if (openStatus) Color.Green else Color.Red,
                     style = MaterialTheme.typography.bodySmall.copy(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold
@@ -322,7 +369,10 @@ fun JobCard(
 @Composable
 fun PreviewHomeScreen() {
     JobFinderTheme {
-        HomeScreenContent(navController = rememberNavController())
+        HomeScreenContent(
+            navController = rememberNavController(),
+            state = HomeState(),
+            onEvent = {})
     }
 
 }

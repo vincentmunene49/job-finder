@@ -8,6 +8,7 @@ import java.util.Locale
 
 data class JobPostingState(
     val jobTitleError: String? = null,
+    val companyNameError: String? = null,
     val companyLogo:ByteArray? = null,
     val companyLogoUri: Uri? = null,
     val error:String? = null,
@@ -19,6 +20,7 @@ data class JobPostingState(
     val isDataValid: Boolean? = false,
     val isLoading: Boolean? = false,
     val jobTitle: String? = "",
+    val companyName:String? = "",
     val jobDescription: String? = "",
     val jobCity: String? = "",
     val jobCountry: String? = "",

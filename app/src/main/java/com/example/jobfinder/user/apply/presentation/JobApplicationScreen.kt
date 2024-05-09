@@ -60,7 +60,9 @@ fun JobApplicationScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun JobApplicationScreenContent(navController: NavController) {
+fun JobApplicationScreenContent(
+    navController: NavController
+) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     Scaffold(

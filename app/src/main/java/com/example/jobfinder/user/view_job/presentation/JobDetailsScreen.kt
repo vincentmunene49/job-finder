@@ -49,6 +49,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +61,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -72,14 +74,14 @@ import com.example.jobfinder.ui.theme.JobFinderTheme
 @Composable
 fun JobDetailsScreen(
     navHostController: NavController,
-    fromHomeScreen: Boolean
+    fromHomeScreen: Boolean,
+    viewModel: JobDetailsViewModel
 ) {
-JobDescriptionScreenContent(
-    aboutJob ="",
-    jobDescription = listOf(),
-    navHostController =navHostController,
-    fromHomeScreen = fromHomeScreen
-)
+    JobDescriptionScreenContent(
+        navHostController = navHostController,
+        fromHomeScreen = fromHomeScreen,
+        state = viewModel.state
+    )
 }
 
 
@@ -87,10 +89,9 @@ JobDescriptionScreenContent(
 @Composable
 fun JobDescriptionScreenContent(
     modifier: Modifier = Modifier,
-    aboutJob: String,
-    jobDescription: List<String>,
     navHostController: NavController,
-    fromHomeScreen:Boolean = true
+    fromHomeScreen: Boolean = true,
+    state: JobDetailState
 ) {
     val scrollState = rememberLazyListState()
     val scrollOffset = remember {
@@ -99,6 +100,8 @@ fun JobDescriptionScreenContent(
 
         }
     }
+
+
 
     Scaffold(
         modifier = modifier
@@ -133,10 +136,10 @@ fun JobDescriptionScreenContent(
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
                     onClick = {
-                        if(fromHomeScreen) navHostController.navigate(route = Routes.Apply.route) else navHostController.navigateUp()
+                        if (fromHomeScreen) navHostController.navigate(route = Routes.Apply.route + "/${state.jobItem.jobId}") else navHostController.navigateUp()
                     }) {
                     Text(
-                        text = if(fromHomeScreen)"Apply" else "Back",
+                        text = if (fromHomeScreen) "Apply" else "Back",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -156,11 +159,11 @@ fun JobDescriptionScreenContent(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         HeaderSection(
-                            jobTitle = "UI Designer",
-                            companyName = "Google",
-                            companyLogo = null,
-                            location = "Mountain View, CA",
-                            email = "info@google.com",
+                            jobTitle = state.jobItem.jobTitle,
+                            companyName = state.jobItem.companyName ?: "",
+                            companyLogo = state.jobItem.companyLogo,
+                            location = state.jobItem.jobLocation ?: "",
+                            email = state.jobItem.companyEmail,
                             phone = "+1 123 456 7890"
                         )
                     }
@@ -175,8 +178,8 @@ fun JobDescriptionScreenContent(
                                 .weight(1f)
                                 .padding(horizontal = 8.dp),
                             icon = Icons.Default.Money,
-                            action = "Salary/mnth",
-                            description = "$42K - $50K"
+                            action = "Salary",
+                            description = "${state.jobItem.currency} ${state.jobItem.salary}/${state.jobItem.frequency}"
                         )
                         JobActionBox(
                             modifier = Modifier
@@ -184,7 +187,7 @@ fun JobDescriptionScreenContent(
                                 .padding(horizontal = 8.dp),
                             icon = Icons.Default.HomeRepairService,
                             action = "Job Type",
-                            description = "Full-Time"
+                            description = state.jobItem.jobType
                         )
 
                     }
@@ -202,7 +205,7 @@ fun JobDescriptionScreenContent(
                                 .padding(horizontal = 8.dp),
                             icon = Icons.Default.Business,
                             action = "Working Model",
-                            description = "Remote"
+                            description = state.jobItem.workingModel
                         )
                         JobActionBox(
                             modifier = Modifier
@@ -210,7 +213,7 @@ fun JobDescriptionScreenContent(
                                 .padding(horizontal = 8.dp),
                             icon = Icons.Default.BarChart,
                             action = "Level",
-                            description = "Intermediate"
+                            description = state.jobItem.level
                         )
 
                     }
@@ -239,7 +242,7 @@ fun JobDescriptionScreenContent(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = aboutJob,
+                        text = state.jobItem.jobDescription,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -265,7 +268,7 @@ fun JobDescriptionScreenContent(
 
 
 
-                items(jobDescription) {
+                items(state.jobItem.requirements) {
 
                     JobDescriptionHolder(
                         Modifier.padding(vertical = 5.dp),
@@ -472,22 +475,7 @@ fun JobActionBox(
 fun PreviewJobDescription() {
     JobFinderTheme {
         JobDescriptionScreenContent(
-            aboutJob = "Lorem ipsum dolor sit amet, " +
-                    "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            jobDescription = listOf(
-                "Design and implement user interfaces for our web platform",
-                "Collaborate with product management and engineering to define and implement innovative solutions for the product direction, visuals and experience",
-                "Conduct user research and evaluate user feedback",
-                "Establish and promote design guidelines, best practices and standards",
-                "Execute all visual design stages from concept to final hand-off to engineering",
-                "Present and defend designs and key milestone deliverables to peers and executive level stakeholders",
-                "Design and implement user interfaces for our web platform",
-                "Collaborate with product management and engineering to define and implement innovative solutions for the product direction, visuals and experience",
-                "Conduct user research and evaluate user feedback",
-                "Establish and promote design guidelines, best practices and standards",
-                "Execute all visual design stages from concept to final hand-off to engineering",
-                "Present and defend designs and key milestone deliverables to peers and executive level stakeholders"
-            ),
+            state = JobDetailState(),
             navHostController = rememberNavController()
         )
     }

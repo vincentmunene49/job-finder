@@ -180,6 +180,36 @@ fun PostJobScreenContent(
                     }
 
                 }
+                Text(
+                    text = "Company Name*",
+                    style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                AppBasicTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = state.companyName ?: "",
+                    onValueChange = {
+                        onEvent(JobPostingEvent.OnTypeCompanyName(it))
+                    },
+                    keyboardActions = KeyboardActions {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    hint = "Software Developer"
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                if (state.companyNameError != null) {
+                    Text(
+                        text = state.companyNameError,
+                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = "Job Title*",

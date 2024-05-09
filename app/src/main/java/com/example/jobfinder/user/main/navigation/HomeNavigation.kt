@@ -6,15 +6,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.jobfinder.common.util.JOB_ID
+import com.example.jobfinder.common.util.JOB_ID_FROM_DETAILS
 import com.example.jobfinder.user.apply.presentation.JobApplicationScreen
 import com.example.jobfinder.user.apply.presentation.SuccessApplicationScreen
 import com.example.jobfinder.user.home.presentation.HomeScreen
 import com.example.jobfinder.user.main.common.presentation.MainScreenSharedViewModel
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.user.view_job.presentation.JobDetailsScreen
+import com.example.jobfinder.user.view_job.presentation.JobDetailsViewModel
+import timber.log.Timber
 
 @Composable
 fun HomeNavigation(viewModel: MainScreenSharedViewModel) {
@@ -25,18 +31,31 @@ fun HomeNavigation(viewModel: MainScreenSharedViewModel) {
             viewModel.showBottomNavigation(true)
             HomeScreen(navHostController)
         }
-        composable(route = Routes.JobDetails.route) {
+        composable(
+            route = "${Routes.JobDetails.route}/{$JOB_ID}",
+            arguments = listOf(navArgument(JOB_ID) {
+                type = NavType.StringType
+            })
+        ) {
             viewModel.showBottomNavigation(false)
-            JobDetailsScreen(navHostController,true)
+            val jobDetailViewModel: JobDetailsViewModel = hiltViewModel()
+            jobDetailViewModel.initJobFunction(it.arguments?.getString(JOB_ID)!!)
+            JobDetailsScreen(navHostController, true, viewModel = jobDetailViewModel)
         }
 
-        composable(route = Routes.Apply.route) {
+        composable(
+            route = "${Routes.Apply.route}/{$JOB_ID}",
+            arguments = listOf(navArgument(JOB_ID) {
+                type = NavType.StringType
+            })
+            ) {
+            Timber.tag("HOMENAVIGATION").d("JobId: ${it.arguments?.getString(JOB_ID)}")
             viewModel.showBottomNavigation(false)
 
             JobApplicationScreen(navHostController)
         }
 
-        composable(route = Routes.Success.route){
+        composable(route = Routes.Success.route) {
             viewModel.showBottomNavigation(false)
             SuccessApplicationScreen(navController = navHostController)
         }

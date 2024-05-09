@@ -13,7 +13,7 @@ sealed class JobPostingEvent {
     data class OnTypeJobCity(val jobCity: String) : JobPostingEvent()
 
     data class OnTypeJobCountry(val jobCountry: String) : JobPostingEvent()
-
+    data class OnTypeCompanyName(val companyName: String) : JobPostingEvent()
     object OnClickPostJob : JobPostingEvent()
 
     object OnClickJobLevel : JobPostingEvent()
@@ -25,6 +25,7 @@ sealed class JobPostingEvent {
     object OnClickSalary : JobPostingEvent()
 
     object OnClickFrequency : JobPostingEvent()
+
 
     object OnClickWorkingModel : JobPostingEvent()
 
@@ -42,13 +43,13 @@ sealed class JobPostingEvent {
 
     data class OnSelectWorkingModel(val workingModel: String) : JobPostingEvent()
 
-    data class OnSelectJobType(val jobType:String) : JobPostingEvent()
+    data class OnSelectJobType(val jobType: String) : JobPostingEvent()
 
-    data class OnSelectJobLevel(val level:String) : JobPostingEvent()
+    data class OnSelectJobLevel(val level: String) : JobPostingEvent()
 
     data class OnSelectCurrency(val currency: String) : JobPostingEvent()
 
-    data class OnSelectSalary(val salary:String) : JobPostingEvent()
+    data class OnSelectSalary(val salary: String) : JobPostingEvent()
 
     data class OnSelectFrequency(val frequency: String) : JobPostingEvent()
     data class OnPhotoSelected(val uri: Uri?, val byteArray: ByteArray?) : JobPostingEvent()
