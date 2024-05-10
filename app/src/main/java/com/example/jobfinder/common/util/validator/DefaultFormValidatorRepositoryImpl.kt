@@ -94,5 +94,29 @@ class DefaultFormValidatorRepositoryImpl : FormValidatorRepository{
         )
     }
 
+    override fun validatePhoneNumber(phoneNumber: String): ValidationResult {
+        if(phoneNumber.isBlank()){
+            return ValidationResult(
+                successful = false,
+                errorMessage = "The phone number can not be blank"
+            )
+        }
+        if(!isValidPhoneNumber(phoneNumber)){
+            return ValidationResult(
+                successful = false,
+                errorMessage = "This is not a valid phone number"
+            )
+        }
+        return ValidationResult(
+            successful = true,
+            errorMessage = null
+        )
+    }
+
+    private fun isValidPhoneNumber(phoneNumber: String): Boolean {
+        val pattern = Regex("^((\\+254|01|07)\\d{8})$")
+        return pattern.matches(phoneNumber)
+    }
+
 
 }

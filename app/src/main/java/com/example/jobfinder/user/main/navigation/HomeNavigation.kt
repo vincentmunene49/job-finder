@@ -18,6 +18,7 @@ import com.example.jobfinder.user.apply.presentation.SuccessApplicationScreen
 import com.example.jobfinder.user.home.presentation.HomeScreen
 import com.example.jobfinder.user.main.common.presentation.MainScreenSharedViewModel
 import com.example.jobfinder.navigation.Routes
+import com.example.jobfinder.user.apply.presentation.JobApplicationViewModel
 import com.example.jobfinder.user.view_job.presentation.JobDetailsScreen
 import com.example.jobfinder.user.view_job.presentation.JobDetailsViewModel
 import timber.log.Timber
@@ -51,8 +52,9 @@ fun HomeNavigation(viewModel: MainScreenSharedViewModel) {
             ) {
             Timber.tag("HOMENAVIGATION").d("JobId: ${it.arguments?.getString(JOB_ID)}")
             viewModel.showBottomNavigation(false)
-
-            JobApplicationScreen(navHostController)
+            val jobApplicationViewModel: JobApplicationViewModel = hiltViewModel()
+            jobApplicationViewModel.init(it.arguments?.getString(JOB_ID)!!)
+            JobApplicationScreen(navHostController, viewModel = jobApplicationViewModel)
         }
 
         composable(route = Routes.Success.route) {

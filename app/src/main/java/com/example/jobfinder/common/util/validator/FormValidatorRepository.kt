@@ -8,4 +8,6 @@ interface FormValidatorRepository {
 
     fun validateGeneralStringField(field: String): ValidationResult
 
+    fun validatePhoneNumber(phoneNumber: String): ValidationResult
+
 }

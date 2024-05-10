@@ -8,6 +8,8 @@ import com.example.jobfinder.auth.sign_up.data.DefaultRegisterRepositoryImpl
 import com.example.jobfinder.auth.sign_up.domain.RegisterRepository
 import com.example.jobfinder.common.util.validator.DefaultFormValidatorRepositoryImpl
 import com.example.jobfinder.common.util.validator.FormValidatorRepository
+import com.example.jobfinder.user.apply.data.ApplicationRepositoryDefaultImpl
+import com.example.jobfinder.user.apply.domain.ApplicationRepository
 import com.example.jobfinder.user.home.data.RepositoryDefaultImpl
 import com.example.jobfinder.user.home.domain.Repository
 import com.google.firebase.auth.FirebaseAuth
@@ -76,6 +78,16 @@ object Module {
     @Singleton
     fun provideViewJobRepository(firebaseFirestore: FirebaseFirestore): com.example.jobfinder.user.view_job.domain.Repository =
         com.example.jobfinder.user.view_job.data.ViewJobDefaultRepositoryImpl(firebaseFirestore)
+
+
+    @Provides
+    @Singleton
+    fun provideApplicationRepository(
+        firebaseFirestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage,
+        auth: FirebaseAuth,
+    ): ApplicationRepository =
+    ApplicationRepositoryDefaultImpl(firebaseFirestore, firebaseStorage,auth)
 
 
 }
