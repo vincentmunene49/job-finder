@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -50,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.jobfinder.R
 import com.example.jobfinder.common.presentation.AppBasicTextField
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.common.util.UiEvent
@@ -306,27 +308,20 @@ fun JobApplicationScreenContent(
                         .clip(RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                    ) {
+                    if (state.cvUri.toString() == "null") {
+
                         Icon(
-                            imageVector = if (state.cvUri.toString() == "null"
-                            ) Icons.Default.UploadFile else Icons.Default.CheckCircle,
+                            imageVector = Icons.Default.UploadFile,
                             contentDescription = null,
-                            tint = if (state.cvUri.toString() == "null"
-                            ) MaterialTheme.colorScheme.primary else Color.Green.copy(
-                                alpha = 0.5f
-                            ),
+                            tint = MaterialTheme.colorScheme.primary,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (state.cvUri.toString() == "null") "" else state.cvUri.toString(),
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
+
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.doc),
+                            contentDescription = null
                         )
                     }
-
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -359,23 +354,20 @@ fun JobApplicationScreenContent(
                         .clip(RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column {
+                    if (state.coverLetterUri.toString() == "null") {
                         Icon(
-                            imageVector = if (state.coverLetter.toString() == "null"
-                            ) Icons.Default.UploadFile else Icons.Default.CheckCircle,
+                            imageVector = Icons.Default.UploadFile,
                             contentDescription = null,
-                            tint = if (state.coverLetterUri.toString() == "null"
-                            ) MaterialTheme.colorScheme.primary else Color.Green.copy(
-                                alpha = 0.5f
-                            ),
+                            tint = MaterialTheme.colorScheme.primary,
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (state.coverLetterUri.toString() == "null") "" else state.coverLetterUri.toString(),
-                            style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.doc),
+                            contentDescription = null
                         )
                     }
+
+
                 }
             }
             if (state.isLoading == true) {

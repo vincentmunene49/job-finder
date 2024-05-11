@@ -186,51 +186,52 @@ fun CandidateApplicationScreenContent(
 
 
                 }
-
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    text = "Cover-Letter Attachment",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(150.dp)
-                        .padding(horizontal = 16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .clickable { }
-                        .clip(RoundedCornerShape(8.dp)),
-                ) {
-                    Icon(
-                        modifier = Modifier.align(Alignment.Center),
-                        imageVector = Icons.Default.PictureAsPdf,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
+                if (!state.candidateDetails?.applicationItem?.coverLetter.isNullOrEmpty()) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        text = "Cover-Letter Attachment",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
-
-                    IconButton(
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                if (!state.candidateDetails?.applicationItem?.coverLetter.isNullOrEmpty()) {
+                    Box(
                         modifier = Modifier
-                            .padding(8.dp)
-                            .align(Alignment.BottomEnd),
-                        onClick = { /*TODO*/ }) {
+                            .fillMaxWidth()
+                            .size(150.dp)
+                            .padding(horizontal = 16.dp)
+                            .background(
+                                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable { }
+                            .clip(RoundedCornerShape(8.dp)),
+                    ) {
                         Icon(
-                            modifier = Modifier.padding(4.dp),
-                            imageVector = Icons.Default.Download,
+                            modifier = Modifier.align(Alignment.Center),
+                            imageVector = Icons.Default.PictureAsPdf,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary
                         )
 
+                        IconButton(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .align(Alignment.BottomEnd),
+                            onClick = { /*TODO*/ }) {
+                            Icon(
+                                modifier = Modifier.padding(4.dp),
+                                imageVector = Icons.Default.Download,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+
+                        }
+
+
                     }
-
-
                 }
-
 
             }
             if (state.isLoading) {
