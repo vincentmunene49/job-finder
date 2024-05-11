@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -19,30 +20,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.common.data.model.JobItem
+import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.user.home.presentation.JobCard
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun ApplicationListScreen(
-    navHostController: NavController
+    navHostController: NavController,
+    viewModel: ApplicationScreenViewModel = hiltViewModel()
 ) {
-    ApplicationListScreenContent(navHostController = navHostController, applications = emptyList())
+    ApplicationListScreenContent(
+        navHostController = navHostController,
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        uiEvent = viewModel.uiEvent
+
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApplicationListScreenContent(
-    applications: List<JobItem>,
-    navHostController: NavController
+    navHostController: NavController,
+    state: ApplicationsScreenState,
+    onEvent: (ApplicationsEvent) -> Unit,
+    uiEvent: Flow<UiEvent>
 ) {
 
     Scaffold(
-        modifier = androidx.compose.ui.Modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
 
@@ -64,19 +78,21 @@ fun ApplicationListScreenContent(
                 .padding(horizontal = 16.dp)
         ) {
 
-            items(10) {
+            items(state.applications ?:  emptyList()) { job ->
                 JobCard(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    orgIcon = null,
-                    city = "Lagos",
-                    jobTitle = "Software Engineer",
-                    companyName = "Google",
-                    country = "Nigeria",
-                    salary = "$100,000",
+                    orgIcon = job.companyLogo,
+                    city = job.jobLocation,
+                    jobTitle = job.jobTitle,
+                    companyName = job.companyName ?: "",
+                    country = "",
+                    currency = job.currency,
+                    frequency = job.frequency,
+                    salary = job.currency,
                     days = "2",
-                    openStatus = false,
+                    openStatus = true,
                     onClick = {
-                        navHostController.navigate(Routes.JobDetails.route)
+                        navHostController.navigate(Routes.JobDetails.route + "/${job.jobId}")
                     }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -94,8 +110,10 @@ fun ApplicationListScreenContent(
 fun PreviewHomeScreen() {
     JobFinderTheme {
         ApplicationListScreenContent(
-            emptyList(),
-            rememberNavController()
+            rememberNavController(),
+            state = ApplicationsScreenState(),
+            onEvent = {},
+            uiEvent = flowOf()
         )
     }
 
