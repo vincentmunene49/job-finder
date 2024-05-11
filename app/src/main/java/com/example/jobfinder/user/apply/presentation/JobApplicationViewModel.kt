@@ -23,8 +23,11 @@ class JobApplicationViewModel @Inject constructor(
     private val formValidatorRepository: FormValidatorRepository
 ) : ViewModel() {
 
-    fun init(jobId: String) {
-        state = state.copy(jobId = jobId)
+    fun init(jobId: String, jobPosterId: String) {
+        state = state.copy(
+            jobId = jobId,
+            jobPosterId = jobPosterId
+        )
     }
 
     var state by mutableStateOf(JobApplicationState())
@@ -52,7 +55,10 @@ class JobApplicationViewModel @Inject constructor(
             }
 
             is JobApplicationEvent.OnClickCoverLetter -> {
-                state = state.copy(coverLetterUri = event.coverLetterUri, coverLetter = event.coverLetterByteArray)
+                state = state.copy(
+                    coverLetterUri = event.coverLetterUri,
+                    coverLetter = event.coverLetterByteArray
+                )
             }
 
             is JobApplicationEvent.OnClickCvAttachment -> {
@@ -81,7 +87,8 @@ class JobApplicationViewModel @Inject constructor(
             name = state.name,
             email = state.email,
             phoneNumber = state.phoneNumber,
-            jobId = state.jobId
+            jobId = state.jobId,
+            jobPosterId = state.jobPosterId
         )
         val cvAttachment = state.cvAttachment ?: byteArrayOf()
         val coverLetter = state.coverLetter ?: byteArrayOf()
@@ -100,7 +107,7 @@ class JobApplicationViewModel @Inject constructor(
                             phoneNumber = "",
                             cvUri = null,
                             coverLetterUri = null
-                            )
+                        )
                         _uiEvent.send(UiEvent.OnSuccess("Application submitted successfully"))
                     }
 
@@ -112,7 +119,10 @@ class JobApplicationViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        state = state.copy(isLoading = true)
+                        state = state.copy(
+                            isLoading = true,
+                            isButtonEnable = false
+                        )
                     }
 
                     else -> {}

@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jobfinder.common.util.JOB_ID
-import com.example.jobfinder.common.util.JOB_ID_FROM_DETAILS
+import com.example.jobfinder.common.util.JOB_POSTER_ID
 import com.example.jobfinder.user.apply.presentation.JobApplicationScreen
 import com.example.jobfinder.user.apply.presentation.SuccessApplicationScreen
 import com.example.jobfinder.user.home.presentation.HomeScreen
@@ -45,15 +45,19 @@ fun HomeNavigation(viewModel: MainScreenSharedViewModel) {
         }
 
         composable(
-            route = "${Routes.Apply.route}/{$JOB_ID}",
-            arguments = listOf(navArgument(JOB_ID) {
+            route = "${Routes.Apply.route}/{$JOB_ID}/{$JOB_POSTER_ID}",
+            arguments = listOf(
+                navArgument(JOB_ID) {
+                type = NavType.StringType
+            },
+                navArgument(JOB_POSTER_ID) {
                 type = NavType.StringType
             })
-            ) {
+        ) {
             Timber.tag("HOMENAVIGATION").d("JobId: ${it.arguments?.getString(JOB_ID)}")
             viewModel.showBottomNavigation(false)
             val jobApplicationViewModel: JobApplicationViewModel = hiltViewModel()
-            jobApplicationViewModel.init(it.arguments?.getString(JOB_ID)!!)
+            jobApplicationViewModel.init(it.arguments?.getString(JOB_ID)!!, it.arguments?.getString(JOB_POSTER_ID)!!)
             JobApplicationScreen(navHostController, viewModel = jobApplicationViewModel)
         }
 

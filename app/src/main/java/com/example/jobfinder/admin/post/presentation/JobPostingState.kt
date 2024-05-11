@@ -2,6 +2,7 @@ package com.example.jobfinder.admin.post.presentation
 
 import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
+import org.joda.time.DateTime
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,7 +39,7 @@ data class JobPostingState(
     val isSalaryExpanded:Boolean? = false,
     val isFrequencyExpanded:Boolean? = false,
     val isWorkingModelExpanded:Boolean? = false,
-    val date:String = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+    val date:Long = DateTime().millis
 
 
 ) {

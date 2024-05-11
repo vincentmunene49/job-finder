@@ -4,6 +4,7 @@ import Resource
 import com.example.jobfinder.admin.post.data.model.Job
 import com.example.jobfinder.admin.post.domain.PostJobRepository
 import com.example.jobfinder.common.util.JOB_COLLECTION
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.async
@@ -17,7 +18,8 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class DefaultPostJobRepositoryImpl @Inject constructor(
     private val dataBase: FirebaseFirestore,
-    private val firebaseStorage: FirebaseStorage
+    private val firebaseStorage: FirebaseStorage,
+    private val auth: FirebaseAuth
 ) : PostJobRepository {
     override suspend fun postJob(job: Job, jobImage: ByteArray): Flow<Resource<Job>> = flow {
         emit(Resource.Loading())
@@ -30,7 +32,9 @@ class DefaultPostJobRepositoryImpl @Inject constructor(
                     imageRef.downloadUrl.await().toString()
                 }
                 val companyLogoUrl = companyLogoUpload.await()
-                val jobWithImage = job.copy(companyLogo = companyLogoUrl)
+                val jobPosterId = auth.currentUser?.uid ?: ""
+
+                val jobWithImage = job.copy(companyLogo = companyLogoUrl, jobPosterId = jobPosterId)
                 val jobUpload = async {
                     val result = dataBase.collection(JOB_COLLECTION).add(jobWithImage).await()
                     val jobId = result.id

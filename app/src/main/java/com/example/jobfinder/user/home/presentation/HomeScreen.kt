@@ -54,6 +54,8 @@ import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 import com.example.jobfinder.user.home.common.OrgIcon
+import org.joda.time.DateTime
+import org.joda.time.Days
 
 @Composable
 fun HomeScreen(
@@ -160,8 +162,10 @@ fun HomeScreenContent(
                             currency = job.currency,
                             frequency = job.frequency,
                             salary = job.salary,
-                            days = "2",
-                            openStatus = true,
+                            days = Days.daysBetween(
+                                DateTime(job.date),
+                                DateTime.now()).days.toLong(),
+                            openStatus = job.openStatus,
                             onClick = {
                                 navController.navigate(Routes.JobDetails.route + "/${job.jobId}")
                             }
@@ -172,7 +176,7 @@ fun HomeScreenContent(
 
             }
 
-            if(state.isLoading == true){
+            if (state.isLoading == true) {
                 LoadingAnimation(
                     modifier = Modifier.align(Alignment.Center)
                 )
@@ -270,7 +274,7 @@ fun JobCard(
     currency: String = "",
     frequency: String = "",
     salary: String,
-    days: String,
+    days: Long,
     openStatus: Boolean,
     onClick: () -> Unit = {}
 ) {

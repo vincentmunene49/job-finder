@@ -187,7 +187,7 @@ class PostJobViewModel @Inject constructor(
 
             is JobPostingEvent.OnTypeCompanyName -> {
                 state = state.copy(companyName = event.companyName)
-                validateGeneralField(event.companyName , "companyName")
+                validateGeneralField(event.companyName, "companyName")
             }
         }
     }
@@ -204,6 +204,7 @@ class PostJobViewModel @Inject constructor(
             frequency = state.frequency ?: "",
             salary = state.salary ?: "",
             date = state.date,
+            openStatus = true,
             level = state.jobLevel ?: "",
             jobLocation = "${state.jobCity?.lowercase()}, ${state.jobCountry?.lowercase()}",
             companyEmail = state.companyEmail?.lowercase() ?: "",

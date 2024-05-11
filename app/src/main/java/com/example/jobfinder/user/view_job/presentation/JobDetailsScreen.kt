@@ -136,7 +136,7 @@ fun JobDescriptionScreenContent(
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
                     onClick = {
-                        if (fromHomeScreen) navHostController.navigate(route = Routes.Apply.route + "/${state.jobItem.jobId}") else navHostController.navigateUp()
+                        if (fromHomeScreen) navHostController.navigate(route = Routes.Apply.route + "/${state.jobItem.jobId}" + "/${state.jobItem.jobPosterId}") else navHostController.navigateUp()
                     }) {
                     Text(
                         text = if (fromHomeScreen) "Apply" else "Back",

@@ -164,6 +164,7 @@ fun JobApplicationScreenContent(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
+                    enabled = state.isButtonEnable ?: false,
                     onClick = {
                         onEvent(JobApplicationEvent.OnClickApply)
                     }) {

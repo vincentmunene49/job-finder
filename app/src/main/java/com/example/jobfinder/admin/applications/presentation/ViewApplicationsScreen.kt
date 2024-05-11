@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,24 +32,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
+import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
 fun ViewApplicationsScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: ApplicantsViewModel = hiltViewModel()
 ) {
-    ViewApplicationsScreenContent(navController = navController)
+    ViewApplicationsScreenContent(
+        navController = navController,
+        state = viewModel.state
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewApplicationsScreenContent(
-    navController: NavController
+    navController: NavController,
+    state: ApplicantsState
 ) {
     Scaffold(
         topBar = {
@@ -75,17 +83,23 @@ fun ViewApplicationsScreenContent(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(10) {
+                items(state.applicants ?: emptyList()) { applicant ->
                     ProfileHolder(
-                        image = "",
-                        name = "vincent munene",
-                        email = "munenevincent49@gmail.com",
+                        image = applicant.user?.imagePath ?: "",
+                        name = applicant.applicationItem?.name ?: "",
+                        email = applicant.applicationItem?.email ?: "",
                         actionText = "View Profile",
                         onClick = {
-                            navController.navigate(route = Routes.Applicant.route)
+                            navController.navigate(route = Routes.Applicant.route + "/${applicant.applicationItem?.id}")
                         }
                     )
                 }
+            }
+
+            if(state.isLoading){
+                LoadingAnimation(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
         }
     }
@@ -169,6 +183,9 @@ fun ProfileHolder(
 @Composable
 fun PreviewViewApplications() {
     JobFinderTheme {
-        ViewApplicationsScreenContent(rememberNavController())
+        ViewApplicationsScreenContent(
+            rememberNavController(),
+            state = ApplicantsState()
+        )
     }
 }

@@ -65,8 +65,9 @@ object Module {
     @Singleton
     fun provideJobRepository(
         firebaseFirestore: FirebaseFirestore,
-        firebaseStorage: FirebaseStorage
-    ): PostJobRepository = DefaultPostJobRepositoryImpl(firebaseFirestore, firebaseStorage)
+        firebaseStorage: FirebaseStorage,
+        firebaseAuth: FirebaseAuth
+    ): PostJobRepository = DefaultPostJobRepositoryImpl(firebaseFirestore, firebaseStorage,firebaseAuth)
 
 
     @Provides
@@ -98,5 +99,20 @@ object Module {
         firebaseFirestore: FirebaseFirestore
     ): GetJobApplications =
         DefaultGetJobApplicationImp(auth = auth, dataBase = firebaseFirestore)
+
+    @Provides
+    @Singleton
+    fun provideApplicantsRepo(
+        database: FirebaseFirestore,
+        auth: FirebaseAuth
+    ): com.example.jobfinder.admin.applications.domain.ApplicantsRepo =
+        com.example.jobfinder.admin.applications.data.DefaultApplicantRepoImpl(database, auth)
+
+    @Provides
+    @Singleton
+    fun provideCandidateRepo(
+        firestore: FirebaseFirestore
+    ): com.example.jobfinder.admin.candidate.domain.CandidateRepo =
+        com.example.jobfinder.admin.candidate.data.CandidateRepoImpl(firestore)
 
 }

@@ -13,9 +13,11 @@ data class JobApplicationState (
     val cvAttachment: ByteArray? = null,
     val cvAttachmentError: String? = "",
     val coverLetter: ByteArray? = null,
+    val isButtonEnable: Boolean? = true,
     val coverLetterUri: Uri? = null,
     val cvUri: Uri? = null,
     val phoneNumber: String? = "",
-    val jobId: String? = ""
+    val jobId: String? = "",
+    val jobPosterId: String? = "",
 ) {
 }

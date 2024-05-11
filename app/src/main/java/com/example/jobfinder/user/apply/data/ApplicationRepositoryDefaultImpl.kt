@@ -49,16 +49,25 @@ class ApplicationRepositoryDefaultImpl @Inject constructor(
                 //get user id
                 val currentUserId = auth.currentUser?.uid ?: ""
 
-
                 // Add the application to Firestore
                 val uploadApplicationItem = applicationItem.copy(
                     userId = currentUserId,
                     cvAttachment = cvUrl,
                     coverLetter = coverLetterUrl
                 )
-                firestore.collection(APPLICATIONS).add(uploadApplicationItem).await()
 
-                emit(Resource.Success(applicationItem))
+
+                val jobUpload = async {
+                    val result = firestore.collection(APPLICATIONS).add(applicationItem).await()
+                    val applicationId = result.id
+                    val applicationWithId = uploadApplicationItem.copy(id = applicationId)
+                    result.set(applicationWithId).await()
+                    applicationWithId
+                }
+
+                val jobUploadWithId = jobUpload.await()
+
+                emit(Resource.Success(jobUploadWithId))
             }
         } catch (e: Exception) {
             if (e is CancellationException) {

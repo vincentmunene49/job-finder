@@ -46,19 +46,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
+import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.ui.theme.JobFinderTheme
 
 @Composable
 fun CandidateApplicationScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: CandidateViewmodel
 ) {
-CandidateApplicationScreenContent(navController = navController)
+    CandidateApplicationScreenContent(
+        navController = navController,
+        state = viewModel.state
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CandidateApplicationScreenContent(
-    navController: NavController
+    navController: NavController,
+    state: CandidateState
 ) {
     val verticalScroll = rememberScrollState()
 
@@ -79,129 +85,157 @@ fun CandidateApplicationScreenContent(
                 })
         }
     ) { paddingValues ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = MaterialTheme.colorScheme.background)
-                .verticalScroll(verticalScroll)
                 .padding(paddingValues)
+
         ) {
 
-            DetailsHeader(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                image = "",
-                name = "vincent munene",
-                email = "vincentmunene@gmail.com",
-                phoneNumber = "+254 799944576"
-            )
-
-            Row(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                    .fillMaxSize()
+                    .verticalScroll(verticalScroll)
             ) {
-                Text(
-                    text = "Post Applied For : ",
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onBackground,
+
+                DetailsHeader(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    image = state.candidateDetails?.user?.imagePath ?: "",
+                    name = state.candidateDetails?.applicationItem?.name ?: "",
+                    email = state.candidateDetails?.applicationItem?.email ?: "",
+                    phoneNumber = state.candidateDetails?.applicationItem?.phoneNumber ?: ""
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Post Applied For : ",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                    Text(
+                        text = state.candidateDetails?.job?.jobTitle ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Level: ",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                    Text(
+                        text = state.candidateDetails?.job?.level ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+
+                }
+
                 Text(
-                    text = "Software Developer",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    text = "CV Attachment",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
 
-            }
 
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                text = "CV Attachment",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-
-          
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(150.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickable { }
-                    .clip(RoundedCornerShape(8.dp)),
-            ) {
-                Icon(
-                    modifier = Modifier.align(Alignment.Center),
-                    imageVector = Icons.Default.PictureAsPdf,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-
-                IconButton(
+                Box(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.BottomEnd),
-                    onClick = { /*TODO*/ }) {
+                        .fillMaxWidth()
+                        .size(150.dp)
+                        .padding(horizontal = 16.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable { }
+                        .clip(RoundedCornerShape(8.dp)),
+                ) {
                     Icon(
-                        modifier = Modifier.padding(4.dp),
-                        imageVector = Icons.Default.Download,
+                        modifier = Modifier.align(Alignment.Center),
+                        imageVector = Icons.Default.PictureAsPdf,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )
+
+                    IconButton(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { /*TODO*/ }) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            imageVector = Icons.Default.Download,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                    }
+
+
+                }
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    text = "Cover-Letter Attachment",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(150.dp)
+                        .padding(horizontal = 16.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable { }
+                        .clip(RoundedCornerShape(8.dp)),
+                ) {
+                    Icon(
+                        modifier = Modifier.align(Alignment.Center),
+                        imageVector = Icons.Default.PictureAsPdf,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+
+                    IconButton(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = { /*TODO*/ }) {
+                        Icon(
+                            modifier = Modifier.padding(4.dp),
+                            imageVector = Icons.Default.Download,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+
+                    }
+
 
                 }
 
 
             }
-
-            Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                text = "Cover-Letter Attachment",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(150.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(
-                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickable { }
-                    .clip(RoundedCornerShape(8.dp)),
-            ) {
-                Icon(
-                    modifier = Modifier.align(Alignment.Center),
-                    imageVector = Icons.Default.PictureAsPdf,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
-                )
-
-                IconButton(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.BottomEnd),
-                    onClick = { /*TODO*/ }) {
-                    Icon(
-                        modifier = Modifier.padding(4.dp),
-                        imageVector = Icons.Default.Download,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-
-                }
-
-
+            if (state.isLoading) {
+                LoadingAnimation(modifier = Modifier.align(Alignment.Center))
             }
-
-
         }
 
     }
@@ -285,6 +319,9 @@ fun DetailsHeader(
 @Composable
 fun PreviewCandidateApplication() {
     JobFinderTheme {
-        CandidateApplicationScreenContent(rememberNavController())
+        CandidateApplicationScreenContent(
+            rememberNavController(),
+            CandidateState()
+        )
     }
 }

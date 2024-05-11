@@ -8,4 +8,5 @@ const val APPLICATIONS = "applications"
 //ids
 
 const val JOB_ID = "jobId"
-const val JOB_ID_FROM_DETAILS = "jobIdFromDetails"
+const val JOB_POSTER_ID = "jobPosterId"
+
