@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.common.data.model.JobItem
+import com.example.jobfinder.common.presentation.EmptyComponent
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.user.home.presentation.JobCard
@@ -113,6 +114,10 @@ fun ApplicationListScreenContent(
             }
             if (state.isLoading) {
                 LoadingAnimation(modifier = Modifier.align(Alignment.Center))
+            }
+
+            if(state.applications.isNullOrEmpty()){
+                EmptyComponent(message = "No Jobs Applied")
             }
 
         }

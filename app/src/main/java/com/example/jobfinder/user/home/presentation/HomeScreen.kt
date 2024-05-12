@@ -50,6 +50,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
+import com.example.jobfinder.common.presentation.EmptyComponent
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
@@ -180,6 +181,10 @@ fun HomeScreenContent(
                 LoadingAnimation(
                     modifier = Modifier.align(Alignment.Center)
                 )
+            }
+
+            if(state.jobs.isNullOrEmpty()){
+                EmptyComponent(message = " No Jobs Found")
             }
         }
 

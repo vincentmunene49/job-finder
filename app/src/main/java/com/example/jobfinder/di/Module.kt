@@ -1,11 +1,14 @@
 package com.example.jobfinder.di
 
+import android.content.Context
 import com.example.jobfinder.admin.post.data.DefaultPostJobRepositoryImpl
 import com.example.jobfinder.admin.post.domain.PostJobRepository
 import com.example.jobfinder.auth.login.data.DefaultLoginRepositoryImpl
 import com.example.jobfinder.auth.login.domain.LoginRepository
 import com.example.jobfinder.auth.sign_up.data.DefaultRegisterRepositoryImpl
 import com.example.jobfinder.auth.sign_up.domain.RegisterRepository
+import com.example.jobfinder.common.util.downloader.Downloader
+import com.example.jobfinder.common.util.downloader.DownloaderImpl
 import com.example.jobfinder.common.util.validator.DefaultFormValidatorRepositoryImpl
 import com.example.jobfinder.common.util.validator.FormValidatorRepository
 import com.example.jobfinder.user.applications.data.DefaultGetJobApplicationImp
@@ -22,6 +25,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -115,4 +119,15 @@ object Module {
     ): com.example.jobfinder.admin.candidate.domain.CandidateRepo =
         com.example.jobfinder.admin.candidate.data.CandidateRepoImpl(firestore)
 
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context {
+        return context
+    }
+
+    @Provides
+    @Singleton
+    fun provideDownloader(context: Context): Downloader {
+        return DownloaderImpl(context)
+    }
 }

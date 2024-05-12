@@ -51,6 +51,12 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+
+            LoginEvents.OnDismissErrorDialog -> {
+                state = state.copy(
+                    showErroDialog = false
+                )
+            }
         }
     }
 

@@ -92,6 +92,7 @@ class SignUpViewModel @Inject constructor(
                 )
                 Timber.tag("RegisterViewModel").d("Switch to user: ${state.isAdmin}")
             }
+
         }
     }
 

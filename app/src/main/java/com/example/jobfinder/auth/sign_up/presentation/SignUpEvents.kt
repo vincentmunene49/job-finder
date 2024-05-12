@@ -9,6 +9,7 @@ sealed class SignUpEvents {
 
     object OnDismissErrorDialog : SignUpEvents()
 
+
     object OnClickAdmin : SignUpEvents()
 
     object OnClickUser : SignUpEvents()

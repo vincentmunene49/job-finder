@@ -5,6 +5,8 @@ sealed class LoginEvents {
 
     data class OnTypePassword(val password: String) : LoginEvents()
 
+    object  OnDismissErrorDialog : LoginEvents()
+
     object OnClickLogin : LoginEvents()
 
 }

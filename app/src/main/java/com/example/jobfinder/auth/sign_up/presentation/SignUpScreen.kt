@@ -64,6 +64,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.auth.common.AuthInput
+import com.example.jobfinder.common.presentation.ErrorDialog
 import com.example.jobfinder.common.presentation.JobFinderAppButton
 import com.example.jobfinder.common.presentation.JobFinderTextInput
 import com.example.jobfinder.common.presentation.LoadingAnimation
@@ -310,6 +311,12 @@ fun SignUpScreenContent(
                 LoadingAnimation(
                     modifier = Modifier.align(Alignment.Center),
                 )
+            }
+
+            if (state.showErrorDialog) {
+                ErrorDialog(
+                    errorMessage = state.errorMessage,
+                    onDismissDialog = { onEvent(SignUpEvents.OnDismissErrorDialog) })
             }
 
         }

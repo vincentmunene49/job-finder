@@ -1,6 +1,7 @@
 package com.example.jobfinder.admin.candidate.presentation
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,9 +35,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +50,11 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
 import com.example.jobfinder.common.presentation.LoadingAnimation
+import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.ui.theme.JobFinderTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun CandidateApplicationScreen(
@@ -56,7 +63,9 @@ fun CandidateApplicationScreen(
 ) {
     CandidateApplicationScreenContent(
         navController = navController,
-        state = viewModel.state
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        uiEvent = viewModel.uiEvent
     )
 }
 
@@ -64,10 +73,28 @@ fun CandidateApplicationScreen(
 @Composable
 fun CandidateApplicationScreenContent(
     navController: NavController,
-    state: CandidateState
+    state: CandidateState,
+    onEvent: (CandidateEvent) -> Unit,
+    uiEvent: Flow<UiEvent>
 ) {
     val verticalScroll = rememberScrollState()
+    val context = LocalContext.current
 
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect {
+            when (it) {
+                is UiEvent.OnCoverLetterDownLoadComplete -> {
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                }
+
+                is UiEvent.OnCvDownLoadComplete -> {
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {}
+            }
+        }
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -160,7 +187,13 @@ fun CandidateApplicationScreenContent(
                             MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .clickable { }
+                        .clickable {
+                            onEvent(
+                                CandidateEvent.OnClickDownloadCv(
+                                    state.candidateDetails?.applicationItem?.cvAttachment ?: ""
+                                )
+                            )
+                        }
                         .clip(RoundedCornerShape(8.dp)),
                 ) {
                     Icon(
@@ -174,7 +207,12 @@ fun CandidateApplicationScreenContent(
                         modifier = Modifier
                             .padding(8.dp)
                             .align(Alignment.BottomEnd),
-                        onClick = { /*TODO*/ }) {
+                        onClick = {
+                            onEvent(
+                                CandidateEvent.OnClickDownloadCv(
+                                    state.candidateDetails?.applicationItem?.cvAttachment ?: ""
+                                )
+                            ) }) {
                         Icon(
                             modifier = Modifier.padding(4.dp),
                             imageVector = Icons.Default.Download,
@@ -205,7 +243,13 @@ fun CandidateApplicationScreenContent(
                                 MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
                                 shape = RoundedCornerShape(8.dp)
                             )
-                            .clickable { }
+                            .clickable {
+                                onEvent(
+                                    CandidateEvent.OnClickDownloadCoverLetter(
+                                        state.candidateDetails?.applicationItem?.coverLetter ?: ""
+                                    )
+                                )
+                            }
                             .clip(RoundedCornerShape(8.dp)),
                     ) {
                         Icon(
@@ -219,7 +263,11 @@ fun CandidateApplicationScreenContent(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .align(Alignment.BottomEnd),
-                            onClick = { /*TODO*/ }) {
+                            onClick = { onEvent(
+                                CandidateEvent.OnClickDownloadCoverLetter(
+                                    state.candidateDetails?.applicationItem?.coverLetter ?: ""
+                                )
+                            ) }) {
                             Icon(
                                 modifier = Modifier.padding(4.dp),
                                 imageVector = Icons.Default.Download,
@@ -322,7 +370,9 @@ fun PreviewCandidateApplication() {
     JobFinderTheme {
         CandidateApplicationScreenContent(
             rememberNavController(),
-            CandidateState()
+            CandidateState(),
+            {},
+            uiEvent = flowOf()
         )
     }
 }

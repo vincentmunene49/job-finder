@@ -37,6 +37,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
+import com.example.jobfinder.common.presentation.EmptyAnimation
+import com.example.jobfinder.common.presentation.EmptyComponent
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
@@ -99,6 +101,12 @@ fun ViewApplicationsScreenContent(
             if(state.isLoading){
                 LoadingAnimation(
                     modifier = Modifier.align(Alignment.Center)
+                )
+            }
+
+            if(state.applicants.isNullOrEmpty()){
+                EmptyComponent(
+                    "No Applicants Currently"
                 )
             }
         }
