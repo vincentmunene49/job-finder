@@ -83,8 +83,8 @@ object Module {
 
     @Provides
     @Singleton
-    fun provideViewJobRepository(firebaseFirestore: FirebaseFirestore): com.example.jobfinder.user.view_job.domain.Repository =
-        com.example.jobfinder.user.view_job.data.ViewJobDefaultRepositoryImpl(firebaseFirestore)
+    fun provideViewJobRepository(firebaseFirestore: FirebaseFirestore, auth: FirebaseAuth): com.example.jobfinder.user.view_job.domain.Repository =
+        com.example.jobfinder.user.view_job.data.ViewJobDefaultRepositoryImpl(firebaseFirestore,auth)
 
 
     @Provides

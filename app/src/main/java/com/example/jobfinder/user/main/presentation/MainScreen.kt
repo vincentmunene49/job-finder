@@ -28,7 +28,6 @@ import com.example.jobfinder.user.main.navigation.ApplicationsNavigation
 import com.example.jobfinder.user.main.navigation.HomeNavigation
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.profile.presentation.ProfileScreen
-import com.example.jobfinder.user.main.navigation.ProfileNavigation
 
 @Composable
 fun MainUserAppScreens(

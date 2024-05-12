@@ -2,6 +2,7 @@ package com.example.jobfinder.user.view_job.presentation
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -58,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,9 +69,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.common.presentation.JobFinderAppButton
+import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.user.home.common.OrgIcon
 import com.example.jobfinder.navigation.Routes
 import com.example.jobfinder.ui.theme.JobFinderTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun JobDetailsScreen(
@@ -80,7 +86,9 @@ fun JobDetailsScreen(
     JobDescriptionScreenContent(
         navHostController = navHostController,
         fromHomeScreen = fromHomeScreen,
-        state = viewModel.state
+        state = viewModel.state,
+        onEvent = viewModel::onEvent,
+        uiEvent = viewModel.uiEvent
     )
 }
 
@@ -91,7 +99,9 @@ fun JobDescriptionScreenContent(
     modifier: Modifier = Modifier,
     navHostController: NavController,
     fromHomeScreen: Boolean = true,
-    state: JobDetailState
+    state: JobDetailState,
+    onEvent: (ViewJobEvent) -> Unit = {},
+    uiEvent: Flow<UiEvent>
 ) {
     val scrollState = rememberLazyListState()
     val scrollOffset = remember {
@@ -100,8 +110,19 @@ fun JobDescriptionScreenContent(
 
         }
     }
+    val context = LocalContext.current
 
+    LaunchedEffect(key1 = true) {
+        uiEvent.collect{
+            when(it) {
+                is UiEvent.OnSuccess -> {
+                    Toast.makeText(context,it.message,Toast.LENGTH_SHORT).show()
+                }
 
+                else -> {}
+            }
+        }
+    }
 
     Scaffold(
         modifier = modifier
@@ -136,10 +157,15 @@ fun JobDescriptionScreenContent(
                         .padding(horizontal = 16.dp),
                     shape = CircleShape,
                     onClick = {
-                        if (fromHomeScreen) navHostController.navigate(route = Routes.Apply.route + "/${state.jobItem.jobId}" + "/${state.jobItem.jobPosterId}") else navHostController.navigateUp()
+                        if (fromHomeScreen) {
+                            navHostController.navigate(route = Routes.Apply.route + "/${state.jobItem.jobId}" + "/${state.jobItem.jobPosterId}")
+                        } else {
+                            onEvent(ViewJobEvent.OnClickWithdrawApplication)
+                            navHostController.navigateUp()
+                        }
                     }) {
                     Text(
-                        text = if (fromHomeScreen) "Apply" else "Back",
+                        text = if (fromHomeScreen) "Apply" else "Withdraw Application",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimary
                     )
@@ -476,7 +502,9 @@ fun PreviewJobDescription() {
     JobFinderTheme {
         JobDescriptionScreenContent(
             state = JobDetailState(),
-            navHostController = rememberNavController()
+            navHostController = rememberNavController(),
+            fromHomeScreen = true,
+            uiEvent = flowOf(),
         )
     }
 }
