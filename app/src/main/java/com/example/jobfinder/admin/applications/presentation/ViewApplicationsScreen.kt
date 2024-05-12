@@ -104,7 +104,7 @@ fun ViewApplicationsScreenContent(
                 )
             }
 
-            if(state.applicants.isNullOrEmpty()){
+            if(state.applicants.isNullOrEmpty() && !state.isLoading){
                 EmptyComponent(
                     "No Applicants Currently"
                 )

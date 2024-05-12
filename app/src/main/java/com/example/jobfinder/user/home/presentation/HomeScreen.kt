@@ -183,7 +183,7 @@ fun HomeScreenContent(
                 )
             }
 
-            if(state.jobs.isNullOrEmpty()){
+            if(state.jobs.isNullOrEmpty() && !state.isLoading!!){
                 EmptyComponent(message = " No Jobs Found")
             }
         }

@@ -130,4 +130,13 @@ object Module {
     fun provideDownloader(context: Context): Downloader {
         return DownloaderImpl(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(
+        firebaseAuth: FirebaseAuth,
+        firebaseFirestore: FirebaseFirestore,
+        firebaseStorage: FirebaseStorage
+    ): com.example.jobfinder.profile.domain.ProfileScreenRepo =
+        com.example.jobfinder.profile.data.DefaultProfileRepoImpl(firebaseAuth, firebaseFirestore, firebaseStorage)
 }

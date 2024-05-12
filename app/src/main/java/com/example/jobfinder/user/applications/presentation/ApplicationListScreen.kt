@@ -116,7 +116,7 @@ fun ApplicationListScreenContent(
                 LoadingAnimation(modifier = Modifier.align(Alignment.Center))
             }
 
-            if(state.applications.isNullOrEmpty()){
+            if(state.applications.isNullOrEmpty() && !state.isLoading){
                 EmptyComponent(message = "No Jobs Applied")
             }
 
