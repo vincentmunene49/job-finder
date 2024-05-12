@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.jobfinder.R
 import com.example.jobfinder.common.presentation.AppBasicTextField
+import com.example.jobfinder.common.presentation.ErrorDialog
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.navigation.Routes
@@ -374,6 +375,12 @@ fun JobApplicationScreenContent(
                 LoadingAnimation(
                     modifier = Modifier.align(Alignment.Center)
                 )
+            }
+
+            if (state.isLoading == false && state.showAlreadyAppliedDialog == true){
+                ErrorDialog(errorMessage = "You have already applied for this job", onDismissDialog = {
+                    onEvent(JobApplicationEvent.OnDismissAlreadyAppliedDialog)
+                })
             }
         }
 

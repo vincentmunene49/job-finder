@@ -9,4 +9,6 @@ interface Repository {
     suspend fun getJobById(jobId: String): Flow<Resource<Job>>
 
     suspend fun withdrawApplication(): Flow<Resource<Unit>>
+
+
 }

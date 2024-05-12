@@ -70,4 +70,6 @@ class ApplicationScreenViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
     }
+
+
 }

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,12 +23,18 @@ class JobApplicationViewModel @Inject constructor(
     private val repository: ApplicationRepository,
     private val formValidatorRepository: FormValidatorRepository
 ) : ViewModel() {
+    private var lastInitializedId: String? = null
 
     fun init(jobId: String, jobPosterId: String) {
         state = state.copy(
             jobId = jobId,
             jobPosterId = jobPosterId
         )
+        if(jobId != lastInitializedId) {
+            checkIfAppliedForJob(jobId)
+            lastInitializedId = jobId
+
+        }
     }
 
     var state by mutableStateOf(JobApplicationState())
@@ -78,6 +85,11 @@ class JobApplicationViewModel @Inject constructor(
                 ) {
                     postJob()
                 }
+            }
+
+            JobApplicationEvent.OnDismissAlreadyAppliedDialog -> {
+                state = state.copy(showAlreadyAppliedDialog = false)
+
             }
         }
     }
@@ -132,6 +144,43 @@ class JobApplicationViewModel @Inject constructor(
         }
 
     }
+    private fun checkIfAppliedForJob(jobId: String?) {
+        viewModelScope.launch {
+            repository.checkIfAlreadyApplied(jobId ?: "").onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        state = state.copy(
+                            isLoading = false,
+                            isButtonEnable = !it.data!!,
+                            showAlreadyAppliedDialog = it.data
+                        )
+                        Timber.tag("JobDetailsViewModel")
+                            .d("isButtonEnabled: ${state.isButtonEnable}")
+                    }
+
+                    is Resource.Error -> {
+                        state = state.copy(
+                            isLoading = false,
+                            error = it.message ?: "An unexpected error occurred"
+                        )
+                        Timber.tag("JobDetailsViewModel").d("isButtonEnabled: ${it.message}")
+
+                    }
+
+                    is Resource.Loading -> {
+                        state = state.copy(
+                            isLoading = true
+                        )
+                    }
+
+                    else -> {}
+                }
+            }.launchIn(viewModelScope)
+
+
+        }
+    }
+
 
     private fun validateEmail(): Boolean {
         val emailResult = formValidatorRepository.validateEmail(state.email ?: "")

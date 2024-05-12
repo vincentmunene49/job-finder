@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetJobApplications {
     suspend fun getJobsAppliedFor(): Flow<Resource<List<Job>>>
+
 }

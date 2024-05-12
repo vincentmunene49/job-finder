@@ -76,4 +76,23 @@ class ApplicationRepositoryDefaultImpl @Inject constructor(
             emit(Resource.Error("☹\uFE0F \n ${e.message}"))
         }
     }
+
+    override suspend fun checkIfAlreadyApplied(jobId: String): Flow<Resource<Boolean>> = flow {
+        emit(Resource.Loading())
+        try {
+            val currentUserId = auth.currentUser?.uid ?: ""
+            val result = firestore.collection(APPLICATIONS)
+                .whereEqualTo("userId", currentUserId)
+                .whereEqualTo("jobId", jobId)
+                .get()
+                .await()
+
+            val isApplied = result.size() > 0
+            emit(Resource.Success(isApplied))
+        } catch (e: Exception) {
+            emit(Resource.Error("☹\uFE0F \n ${e.message}"))
+        }
+
+    }
+
 }

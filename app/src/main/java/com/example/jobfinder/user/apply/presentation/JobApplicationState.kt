@@ -1,5 +1,6 @@
 package com.example.jobfinder.user.apply.presentation
 
+import android.app.AlertDialog
 import android.net.Uri
 
 data class JobApplicationState (
@@ -14,6 +15,7 @@ data class JobApplicationState (
     val cvAttachmentError: String? = "",
     val coverLetter: ByteArray? = null,
     val isButtonEnable: Boolean? = true,
+    val showAlreadyAppliedDialog: Boolean? = false,
     val coverLetterUri: Uri? = null,
     val cvUri: Uri? = null,
     val phoneNumber: String? = "",

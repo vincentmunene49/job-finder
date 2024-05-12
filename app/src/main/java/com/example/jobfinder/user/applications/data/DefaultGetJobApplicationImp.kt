@@ -51,4 +51,6 @@ class DefaultGetJobApplicationImp @Inject constructor(
         }
 
     }
+
+
 }

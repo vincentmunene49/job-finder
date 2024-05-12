@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,8 +27,14 @@ class JobDetailsViewModel @Inject constructor(
     private var _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
+    private var lastInitializedId: String? = null
+
     fun initJobFunction(jobId: String) {
-        getJob(jobId)
+        if(jobId != lastInitializedId) {
+            getJob(jobId)
+            lastInitializedId = jobId
+        }
+
     }
 
     fun onEvent(event: ViewJobEvent) {
@@ -43,14 +50,20 @@ class JobDetailsViewModel @Inject constructor(
             repository.getJobById(jobId).onEach {
                 when (it) {
                     is Resource.Loading -> {
-                        state = state.copy(isLoading = true)
+                        state = state.copy(
+                            isLoading = true,
+                        )
+                        Timber.tag("JobDetailsViewModel").d("Loading")
                     }
 
                     is Resource.Success -> {
                         state = state.copy(
+                            isLoading = false,
                             jobItem = it.data!!,
-                            isLoading = false
+
                         )
+                        Timber.tag("JobDetailsViewModel").d("Done Loading")
+
                     }
 
                     is Resource.Error -> {
@@ -93,4 +106,6 @@ class JobDetailsViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
+
 }

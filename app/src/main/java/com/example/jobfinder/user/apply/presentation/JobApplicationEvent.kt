@@ -4,6 +4,8 @@ import android.net.Uri
 
 sealed class JobApplicationEvent {
     data class OnTypeName(val name: String) : JobApplicationEvent()
+
+    object OnDismissAlreadyAppliedDialog : JobApplicationEvent()
     data class OnTypeEmail(val email: String) : JobApplicationEvent()
     data class OnClickCvAttachment(val cvAttachmentUri: Uri?, val cvByteArray: ByteArray?) : JobApplicationEvent()
 

@@ -11,4 +11,8 @@ interface ApplicationRepository {
         cvAttachment: ByteArray,
         coverLetter: ByteArray
     ): Flow<Resource<ApplicationItem>>
+
+    suspend fun checkIfAlreadyApplied(jobId: String): Flow<Resource<Boolean>>
+
+
 }
