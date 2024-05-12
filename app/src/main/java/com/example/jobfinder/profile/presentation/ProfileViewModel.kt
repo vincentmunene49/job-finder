@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val repository: ProfileScreenRepo
-):ViewModel() {
+) : ViewModel() {
 
     var state by mutableStateOf(ProfileState())
         private set
@@ -31,19 +31,62 @@ class ProfileViewModel @Inject constructor(
     init {
         getUserDetails()
     }
+
     fun onEvent(event: ProfileEvents) {
         when (event) {
-            ProfileEvents.OnClickImage -> {
-
+            is ProfileEvents.OnClickImage -> {
+                state = state.copy(
+                    userImage = event.byteArray,
+                    userImageUri = event.uri
+                )
+                if(state.userImage != null) {
+                    updateProfileImage()
+                }
             }
+
             ProfileEvents.OnClickLogOut -> {
                 logout()
             }
         }
     }
 
+    private fun updateProfileImage() {
+        viewModelScope.launch {
+            repository.updateProfileImage(state.userImage ?: byteArrayOf()).onEach {
+                when (it) {
+                    is Resource.Success -> {
+                        state = state.copy(
+                            isLoading = false
+                        )
+                        _uiEvent.send(UiEvent.OnSuccess("Image Updated"))
+                        Timber.tag("ProfileViewModel").d("Image Updated")
+                    }
 
-    private fun getUserDetails(){
+                    is Resource.Error -> {
+                        state = state.copy(
+                            isLoading = false,
+                            error = it.message ?: "An unexpected error occurred",
+                        )
+                        Timber.tag("ProfileViewModel").d("Error: ${it.message}")
+
+                    }
+
+                    is Resource.Loading -> {
+                        state = state.copy(
+                            isLoading = true
+                        )
+                        Timber.tag("ProfileViewModel").d("Started upload")
+
+                    }
+
+                    else -> {}
+                }
+            }.launchIn(this)
+        }
+    }
+
+
+    private fun getUserDetails() {
         viewModelScope.launch {
             repository.getProfileData().onEach {
                 when (it) {
@@ -73,6 +116,7 @@ class ProfileViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
+
     private fun logout() {
         viewModelScope.launch {
             repository.logout().onEach {

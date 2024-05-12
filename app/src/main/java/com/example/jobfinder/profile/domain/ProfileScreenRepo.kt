@@ -8,7 +8,7 @@ interface ProfileScreenRepo {
     suspend fun getProfileData(): Flow<Resource<User>>
 
 
-    suspend fun updateProfileImage(image: String): Flow<Resource<String>>
+    suspend fun updateProfileImage(image: ByteArray): Flow<Resource<String>>
 
     suspend fun logout(): Flow<Resource<Unit>>
 }

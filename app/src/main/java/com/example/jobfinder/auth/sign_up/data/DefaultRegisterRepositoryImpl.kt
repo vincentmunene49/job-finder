@@ -35,9 +35,10 @@ class DefaultRegisterRepositoryImpl @Inject constructor(
             )
             val collection = if (isAdmin) ADMIN_COLLECTION else USER_COLLECTION
             if (result.user != null) {
+                val userUpload = user.copy(userId = result.user!!.uid)
                 firebaseFirestore.collection(collection)
                     .document(result.user!!.uid)
-                    .set(user)
+                    .set(userUpload)
                     .await()
                 emit(Resource.Success(user))
             } else {

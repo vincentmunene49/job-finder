@@ -1,6 +1,10 @@
 package com.example.jobfinder.profile.presentation
 
 import android.content.res.Configuration
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +31,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +49,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.jobfinder.R
+import com.example.jobfinder.admin.post.presentation.JobPostingEvent
 import com.example.jobfinder.common.presentation.LoadingAnimation
 import com.example.jobfinder.common.util.UiEvent
 import com.example.jobfinder.navigation.Routes
@@ -68,11 +76,26 @@ fun ProfileScreenContent(
     onEvent: (ProfileEvents) -> Unit,
     uiEvent: Flow<UiEvent>
 ) {
+    val context = LocalContext.current
+
+    val imagePicker =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            val byteArray: ByteArray? = uri?.let {
+                context.contentResolver.openInputStream(it)?.use { inputStream ->
+                    inputStream.readBytes()
+                }
+            }
+            onEvent(ProfileEvents.OnClickImage(uri, byteArray))
+        }
 
     LaunchedEffect(key1 = true) {
         uiEvent.collect {
             when (it) {
                 is UiEvent.NavigateToLoginScreen -> {
+                }
+
+                is UiEvent.OnSuccess -> {
+                    Toast.makeText(context, "Image Updated", Toast.LENGTH_SHORT).show()
                 }
 
                 else -> {}
@@ -128,18 +151,41 @@ fun ProfileScreenContent(
                                     shape = CircleShape
                                 )
                                 .size(50.dp)
-                                .clickable { }
+                                .clickable {
+                                    imagePicker.launch("image/*")
+                                }
                                 .clip(CircleShape),
                             contentAlignment = Alignment.Center
 
                         ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .padding(8.dp),
-                                model = state.profileData.imagePath,
-                                contentDescription = null,
-                                placeholder = painterResource(id = R.drawable.person)
-                            )
+                            if (mutableStateOf(state.userImageUri).value == null && state.profileData.imagePath == null) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.baseline_camera_24),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else if(mutableStateOf(state.userImageUri).value != null) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .size(120.dp),
+                                    model = state.userImageUri,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+
+
+                            } else{
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .size(120.dp),
+                                    model = state.profileData.imagePath,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop
+                                )
+
+                            }
                         }
                         Spacer(modifier = Modifier.width(10.dp))
 
@@ -162,28 +208,6 @@ fun ProfileScreenContent(
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .clip(CircleShape)
-//                        .clickable {
-//                            onEvent(ProfileEvents.OnClickLogOut)
-//                        },
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.AutoMirrored.Filled.Logout,
-//                        contentDescription = null,
-//                        tint = MaterialTheme.colorScheme.primary
-//                    )
-//
-//                    Text(
-//                        text = "Logout",
-//                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-//                        color = MaterialTheme.colorScheme.primary,
-//                        modifier = Modifier.padding(8.dp)
-//                    )
-//                }
 
             }
             if (state.isLoading) {
