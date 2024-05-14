@@ -29,7 +29,7 @@ sealed class Routes(val route: String) {
 
 const val LOGIN = "login"
 const val POST_JOB  = "Post Job"
-const val ADMIN_PROFILE = "Profile"
+const val ADMIN_PROFILE = "Listing"
 const val ADMIN_HOME = "Home"
 const val REGISTER = "register"
 const val HOME = "Home"

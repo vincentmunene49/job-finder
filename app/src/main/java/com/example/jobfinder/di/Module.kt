@@ -139,4 +139,13 @@ object Module {
         firebaseStorage: FirebaseStorage
     ): com.example.jobfinder.profile.domain.ProfileScreenRepo =
         com.example.jobfinder.profile.data.DefaultProfileRepoImpl(firebaseAuth, firebaseFirestore, firebaseStorage)
+
+
+    @Provides
+    @Singleton
+    fun provideSelfJobListingRepository(
+        firebaseAuth: FirebaseAuth,
+        firebaseFirestore: FirebaseFirestore
+    ): com.example.jobfinder.admin.job_posting.domain.SelfJobListingRepo =
+        com.example.jobfinder.admin.job_posting.data.SelfJobListingRepoImpl(firebaseAuth, firebaseFirestore)
 }
